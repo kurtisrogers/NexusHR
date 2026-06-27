@@ -1,11 +1,9 @@
-from django.contrib.auth import login, logout
 from django.contrib.auth.views import LoginView, LogoutView
-from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView
 
 from accounts.forms import LoginForm
-from accounts.mixins import HRStaffRequiredMixin, SuperAdminRequiredMixin
+from accounts.mixins import HRStaffRequiredMixin
 from accounts.models import User
 
 

@@ -1,10 +1,9 @@
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.views.generic import CreateView, DetailView, ListView, UpdateView
+from django.views.generic import CreateView, ListView
 
 from accounts.mixins import HRStaffRequiredMixin
-from organization.forms import CompanyForm, DepartmentForm, JobTitleForm, LocationForm
+from organization.forms import DepartmentForm
 from organization.models import Company, Department, JobTitle, Location
 
 

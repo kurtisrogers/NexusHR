@@ -2,12 +2,12 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
-from accounts.mixins import HRStaffRequiredMixin, ManagerRequiredMixin
+from accounts.mixins import HRStaffRequiredMixin
 from employees.forms import DocumentUploadForm, EmployeeForm, EmployeeProfileForm
-from employees.models import Employee, EmployeeDocument
+from employees.models import Employee
 
 
 class EmployeeListView(LoginRequiredMixin, ListView):
@@ -24,9 +24,7 @@ class EmployeeListView(LoginRequiredMixin, ListView):
         if user.is_hr_staff:
             return qs
         if user.is_manager_or_above and hasattr(user, "employee_profile"):
-            return qs.filter(
-                Q(manager=user.employee_profile) | Q(pk=user.employee_profile.pk)
-            )
+            return qs.filter(Q(manager=user.employee_profile) | Q(pk=user.employee_profile.pk))
         if hasattr(user, "employee_profile"):
             return qs.filter(pk=user.employee_profile.pk)
         return qs.none()

@@ -1,4 +1,4 @@
-from datetime import date, datetime, time
+from datetime import datetime
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -6,7 +6,6 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.generic import ListView
 
-from accounts.mixins import HRStaffRequiredMixin
 from attendance.models import AttendanceRecord, AttendanceStatus
 
 

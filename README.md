@@ -58,8 +58,35 @@ Visit http://127.0.0.1:8000/ and sign in with a demo account:
 
 ## Development
 
+### Running tests
+
 ```bash
-python manage.py test
+python manage.py test              # all 57 tests across 11 apps
+python manage.py test leave        # single app
+python manage.py test accounts.tests.UserModelTests  # single class
+```
+
+### Pre-commit hooks
+
+Install dev dependencies and enable hooks:
+
+```bash
+pip install -r requirements-dev.txt
+pre-commit install
+pre-commit run --all-files   # run manually on entire repo
+```
+
+Hooks run automatically before each commit:
+
+| Hook | Purpose |
+|------|---------|
+| trailing-whitespace / end-of-file-fixer | File hygiene |
+| check-yaml / check-merge-conflict / detect-private-key | Safety checks |
+| ruff + ruff-format | Lint and format Python (config in `pyproject.toml`) |
+| django-check | `python manage.py check` |
+| django-tests | Full test suite |
+
+```bash
 python manage.py createsuperuser  # optional additional admin
 ```
 

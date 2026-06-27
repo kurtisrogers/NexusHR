@@ -1,11 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.views.generic import CreateView, ListView, UpdateView
+from django.views.generic import CreateView, ListView
 
-from accounts.mixins import HRStaffRequiredMixin, ManagerRequiredMixin
-from performance.forms import GoalForm, PerformanceReviewForm, ReviewCycleForm
+from accounts.mixins import HRStaffRequiredMixin
+from performance.forms import GoalForm
 from performance.models import Goal, PerformanceReview, ReviewCycle
 
 
@@ -29,10 +28,7 @@ class GoalListView(LoginRequiredMixin, ListView):
             if self.request.user.is_manager_or_above:
                 from django.db.models import Q
 
-                return qs.filter(
-                    Q(employee=profile)
-                    | Q(employee__manager=profile)
-                )
+                return qs.filter(Q(employee=profile) | Q(employee__manager=profile))
             return qs.filter(employee=profile)
         return qs.none()
 
@@ -57,16 +53,12 @@ class ReviewListView(LoginRequiredMixin, ListView):
     context_object_name = "reviews"
 
     def get_queryset(self):
-        qs = PerformanceReview.objects.select_related(
-            "employee__user", "cycle", "reviewer"
-        )
+        qs = PerformanceReview.objects.select_related("employee__user", "cycle", "reviewer")
         if self.request.user.is_hr_staff:
             return qs
         if hasattr(self.request.user, "employee_profile"):
             profile = self.request.user.employee_profile
             from django.db.models import Q
 
-            return qs.filter(
-                Q(employee=profile) | Q(reviewer=self.request.user)
-            )
+            return qs.filter(Q(employee=profile) | Q(reviewer=self.request.user))
         return qs.none()
