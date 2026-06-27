@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Submit Expense{% endblock %}
+{% block page_title %}Submit Expense Claim{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Submit</button>
+  <a href="{% url 'expenses:list' %}" role="button" class="outline">Cancel</a>
+</form>
+{% endblock %}

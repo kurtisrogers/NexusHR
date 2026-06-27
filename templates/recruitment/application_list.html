@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Applications{% endblock %}
+{% block page_title %}Recruitment Pipeline{% endblock %}
+
+{% block content %}
+<div class="filter-bar">
+  <a href="{% url 'recruitment:applications' %}" role="button" class="{% if not current_stage %}secondary{% else %}outline{% endif %}">All</a>
+  {% for val, label in stages %}
+  <a href="?stage={{ val }}" role="button" class="{% if current_stage == val %}secondary{% else %}outline{% endif %}">{{ label }}</a>
+  {% endfor %}
+</div>
+
+<table>
+  <thead><tr><th>Applicant</th><th>Job</th><th>Stage</th><th>Rating</th><th>Applied</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for app in applications %}
+    {% include "recruitment/partials/application_row.html" %}
+    {% empty %}
+    <tr><td colspan="6"><em>No applications.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

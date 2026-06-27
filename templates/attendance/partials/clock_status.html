@@ -1,0 +1,12 @@
+<div style="display: flex; gap: 1rem; align-items: center;">
+  <div>
+    <strong>Today</strong>
+    {% if record %}
+    <p>In: {{ record.clock_in|default:"—" }} | Out: {{ record.clock_out|default:"—" }} | {{ record.hours_worked }}h</p>
+    {% else %}
+    <p>Not clocked in yet</p>
+    {% endif %}
+  </div>
+  <button hx-post="{% url 'attendance:clock_in' %}" hx-target="#clock-widget" hx-swap="innerHTML" class="outline">Clock In</button>
+  <button hx-post="{% url 'attendance:clock_out' %}" hx-target="#clock-widget" hx-swap="innerHTML" class="outline secondary">Clock Out</button>
+</div>

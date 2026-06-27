@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Goals{% endblock %}
+{% block page_title %}Performance Goals{% endblock %}
+
+{% block top_actions %}
+<a href="{% url 'performance:goal_create' %}" role="button">+ New Goal</a>
+<a href="{% url 'performance:reviews' %}" role="button" class="outline">Reviews</a>
+{% if is_hr_staff %}
+<a href="{% url 'performance:cycles' %}" role="button" class="outline">Review Cycles</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<table>
+  <thead><tr><th>Employee</th><th>Goal</th><th>Progress</th><th>Status</th><th>Target Date</th></tr></thead>
+  <tbody>
+    {% for goal in goals %}
+    <tr>
+      <td>{{ goal.employee.user.display_name }}</td>
+      <td>{{ goal.title }}</td>
+      <td>
+        <progress value="{{ goal.progress }}" max="100"></progress> {{ goal.progress }}%
+      </td>
+      <td>{{ goal.get_status_display }}</td>
+      <td>{{ goal.target_date|default:"—" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5"><em>No goals yet.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

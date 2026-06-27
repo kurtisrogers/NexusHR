@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Recruitment{% endblock %}
+{% block page_title %}Job Postings{% endblock %}
+
+{% block top_actions %}
+{% if can_recruit %}
+<a href="{% url 'recruitment:job_create' %}" role="button">+ New Job</a>
+<a href="{% url 'recruitment:applications' %}" role="button" class="outline">Applications</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<table>
+  <thead><tr><th>Title</th><th>Department</th><th>Status</th><th>Openings</th><th>Posted</th></tr></thead>
+  <tbody>
+    {% for job in jobs %}
+    <tr>
+      <td><a href="{% url 'recruitment:job_detail' job.pk %}">{{ job.title }}</a></td>
+      <td>{{ job.department|default:"—" }}</td>
+      <td><span class="badge badge-{{ job.status }}">{{ job.get_status_display }}</span></td>
+      <td>{{ job.openings }}</td>
+      <td>{{ job.created_at|date:"M d, Y" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5"><em>No job postings.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

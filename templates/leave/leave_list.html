@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Leave Requests{% endblock %}
+{% block page_title %}Leave Management{% endblock %}
+
+{% block top_actions %}
+<a href="{% url 'leave:balances' %}" role="button" class="outline">My Balances</a>
+<a href="{% url 'leave:create' %}" role="button">+ Request Leave</a>
+{% endblock %}
+
+{% block content %}
+<div class="filter-bar">
+  <a href="{% url 'leave:list' %}" role="button" class="{% if not status_filter %}secondary{% else %}outline{% endif %}">All</a>
+  <a href="?status=pending" role="button" class="{% if status_filter == 'pending' %}secondary{% else %}outline{% endif %}">Pending ({{ pending_count }})</a>
+  <a href="?status=approved" role="button" class="outline">Approved</a>
+  <a href="?status=rejected" role="button" class="outline">Rejected</a>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Actions</th></tr>
+  </thead>
+  <tbody id="leave-list">
+    {% for req in requests %}
+    {% include "leave/partials/request_row.html" %}
+    {% empty %}
+    <tr><td colspan="7"><em>No leave requests.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

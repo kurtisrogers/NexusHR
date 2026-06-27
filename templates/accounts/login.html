@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block auth_content %}
+<div class="login-page">
+  <div class="login-card">
+    <h1>NexusHR</h1>
+    <p class="subtitle">Human Resource Management System</p>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Sign In</button>
+    </form>
+    <details style="margin-top: 1.5rem;">
+      <summary>Demo accounts</summary>
+      <small>
+        <strong>admin</strong> / admin123 (Super Admin)<br>
+        <strong>hr.admin</strong> / hr123 (HR Admin)<br>
+        <strong>manager</strong> / mgr123 (Manager)<br>
+        <strong>employee</strong> / emp123 (Employee)<br>
+        <strong>recruiter</strong> / rec123 (Recruiter)
+      </small>
+    </details>
+  </div>
+</div>
+{% endblock %}

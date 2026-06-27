@@ -1,0 +1,16 @@
+<tr id="app-{{ app.pk }}">
+  <td>{{ app.applicant.full_name }}</td>
+  <td>{{ app.job.title }}</td>
+  <td>{{ app.get_stage_display }}</td>
+  <td>{{ app.rating|default:"—" }}</td>
+  <td>{{ app.applied_at|date:"M d" }}</td>
+  <td>
+    {% if can_recruit %}
+    <select name="stage" hx-post="{% url 'recruitment:update_stage' app.pk %}" hx-target="#app-{{ app.pk }}" hx-swap="outerHTML" hx-include="this">
+      {% for val, label in stages %}
+      <option value="{{ val }}" {% if app.stage == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    {% endif %}
+  </td>
+</tr>

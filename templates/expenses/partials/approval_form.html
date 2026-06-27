@@ -1,0 +1,11 @@
+<tr id="claim-{{ claim.pk }}">
+  <td colspan="7">
+    <form hx-post="{% url 'expenses:approve' claim.pk %}" hx-target="#claim-{{ claim.pk }}" hx-swap="outerHTML">
+      {% csrf_token %}
+      <p><strong>{{ claim.title }}</strong> — ${{ claim.amount }} ({{ claim.category.name }})</p>
+      {{ form.as_p }}
+      <button type="submit" name="action" value="approve">Approve</button>
+      <button type="submit" name="action" value="reject" class="outline secondary">Reject</button>
+    </form>
+  </td>
+</tr>

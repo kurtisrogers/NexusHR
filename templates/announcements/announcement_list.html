@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Announcements{% endblock %}
+{% block page_title %}Announcements{% endblock %}
+
+{% block top_actions %}
+{% if is_hr_staff %}
+<a href="{% url 'announcements:create' %}" role="button">+ New Announcement</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% for ann in announcements %}
+<article {% if ann.is_pinned %}style="border-left: 4px solid var(--pico-primary);"{% endif %}>
+  <header>
+    <strong>{{ ann.title }}</strong>
+    {% if ann.is_pinned %}📌{% endif %}
+    <span class="badge badge-{{ ann.priority }}">{{ ann.get_priority_display }}</span>
+    <small>{{ ann.published_at|date:"M d, Y" }} · {{ ann.author.display_name|default:"HR" }}</small>
+  </header>
+  <p>{{ ann.content|linebreaks }}</p>
+  {% if ann.department %}<small>For: {{ ann.department.name }}</small>{% endif %}
+</article>
+{% empty %}
+<p><em>No announcements.</em></p>
+{% endfor %}
+{% endblock %}

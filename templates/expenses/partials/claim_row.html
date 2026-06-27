@@ -1,0 +1,13 @@
+<tr id="claim-{{ claim.pk }}">
+  <td>{{ claim.employee.user.display_name }}</td>
+  <td>{{ claim.title }}</td>
+  <td>{{ claim.category.name }}</td>
+  <td>${{ claim.amount }} {{ claim.currency }}</td>
+  <td>{{ claim.expense_date }}</td>
+  <td><span class="badge badge-{{ claim.status }}">{{ claim.get_status_display }}</span></td>
+  <td>
+    {% if claim.status == 'submitted' and is_manager_or_above %}
+    <button class="outline" hx-get="{% url 'expenses:approve' claim.pk %}" hx-target="#claim-{{ claim.pk }}" hx-swap="outerHTML">Review</button>
+    {% else %}—{% endif %}
+  </td>
+</tr>

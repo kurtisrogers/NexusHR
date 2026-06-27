@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Locations{% endblock %}
+{% block page_title %}Office Locations{% endblock %}
+
+{% block content %}
+<table>
+  <thead><tr><th>Name</th><th>City</th><th>Country</th><th>HQ</th></tr></thead>
+  <tbody>
+    {% for loc in locations %}
+    <tr>
+      <td>{{ loc.name }}</td>
+      <td>{{ loc.city|default:"—" }}</td>
+      <td>{{ loc.country|default:"—" }}</td>
+      <td>{% if loc.is_headquarters %}✓{% endif %}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4"><em>No locations.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Leave Balances{% endblock %}
+{% block page_title %}Leave Balances ({{ year }}){% endblock %}
+
+{% block content %}
+<table>
+  <thead><tr><th>Leave Type</th><th>Allocated</th><th>Used</th><th>Carried Over</th><th>Remaining</th></tr></thead>
+  <tbody>
+    {% for bal in balances %}
+    <tr>
+      <td>{{ bal.leave_type.name }}</td>
+      <td>{{ bal.allocated }}</td>
+      <td>{{ bal.used }}</td>
+      <td>{{ bal.carried_over }}</td>
+      <td><strong>{{ bal.remaining }}</strong></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5"><em>No leave balances configured.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

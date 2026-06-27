@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Review Cycles{% endblock %}
+{% block page_title %}Review Cycles{% endblock %}
+
+{% block content %}
+<table>
+  <thead><tr><th>Name</th><th>Period</th><th>Status</th></tr></thead>
+  <tbody>
+    {% for cycle in cycles %}
+    <tr>
+      <td>{{ cycle.name }}</td>
+      <td>{{ cycle.start_date }} – {{ cycle.end_date }}</td>
+      <td>{{ cycle.get_status_display }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3"><em>No review cycles.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

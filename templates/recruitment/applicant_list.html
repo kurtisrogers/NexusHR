@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Applicants{% endblock %}
+{% block page_title %}Applicants{% endblock %}
+
+{% block content %}
+<table>
+  <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Source</th><th>Added</th></tr></thead>
+  <tbody>
+    {% for a in applicants %}
+    <tr>
+      <td>{{ a.full_name }}</td>
+      <td>{{ a.email }}</td>
+      <td>{{ a.phone|default:"—" }}</td>
+      <td>{{ a.source|default:"—" }}</td>
+      <td>{{ a.created_at|date:"M d, Y" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5"><em>No applicants.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

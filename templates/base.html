@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}NexusHR{% endblock %} | HR Management System</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body x-data="{ sidebarOpen: false }">
+  {% if user.is_authenticated %}
+  <div class="app-layout">
+    <aside class="sidebar" :class="{ 'open': sidebarOpen }">
+      <div class="sidebar-brand">
+        <strong>NexusHR</strong>
+        <small>Human Resources</small>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="{% url 'reports:dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>Dashboard</a></li>
+          <li><a href="{% url 'employees:list' %}">Employees</a></li>
+          {% if is_hr_staff %}
+          <li><a href="{% url 'organization:departments' %}">Organization</a></li>
+          {% endif %}
+          <li><a href="{% url 'leave:list' %}">Leave</a></li>
+          <li><a href="{% url 'attendance:list' %}">Attendance</a></li>
+          <li><a href="{% url 'recruitment:jobs' %}">Recruitment</a></li>
+          <li><a href="{% url 'performance:goals' %}">Performance</a></li>
+          <li><a href="{% url 'payroll:payslips' %}">Payroll</a></li>
+          <li><a href="{% url 'expenses:list' %}">Expenses</a></li>
+          <li><a href="{% url 'announcements:list' %}">Announcements</a></li>
+          <li><a href="{% url 'announcements:policies' %}">Policies</a></li>
+        </ul>
+      </nav>
+      <div class="sidebar-footer">
+        <small>{{ user.display_name }}</small>
+        <span class="role-badge">{{ user_role_label }}</span>
+        <a href="{% url 'accounts:logout' %}" role="button" class="outline secondary">Logout</a>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="top-bar">
+        <button class="menu-toggle outline" @click="sidebarOpen = !sidebarOpen" aria-label="Toggle menu">☰</button>
+        <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+        <div class="top-actions">{% block top_actions %}{% endblock %}</div>
+      </header>
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+        <article class="message-{{ message.tags }}">{{ message }}</article>
+        {% endfor %}
+      </div>
+      {% endif %}
+      <div class="page-content">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+  {% else %}
+  {% block auth_content %}{% endblock %}
+  {% endif %}
+</body>
+</html>
