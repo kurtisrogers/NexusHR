@@ -66,6 +66,8 @@ python manage.py test leave        # single app
 python manage.py test accounts.tests.UserModelTests  # single class
 ```
 
+Tests also run automatically in **GitHub Actions** on every push/PR to `main` (`.github/workflows/tests.yml`).
+
 ### Pre-commit hooks
 
 Install dev dependencies and enable hooks:
