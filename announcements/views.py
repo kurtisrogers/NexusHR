@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.views.generic import CreateView, ListView
 
 from accounts.mixins import HRStaffRequiredMixin
-from announcements.forms import AnnouncementForm, PolicyDocumentForm
+from announcements.forms import AnnouncementForm
 from announcements.models import Announcement, PolicyDocument
 
 
@@ -16,9 +16,7 @@ class AnnouncementListView(LoginRequiredMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        qs = Announcement.objects.filter(is_active=True).select_related(
-            "author", "department"
-        )
+        qs = Announcement.objects.filter(is_active=True).select_related("author", "department")
         user = self.request.user
         if user.is_hr_staff:
             return qs

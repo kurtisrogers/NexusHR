@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
@@ -8,9 +6,8 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import CreateView, ListView
 
-from accounts.mixins import ManagerRequiredMixin
 from leave.forms import LeaveApprovalForm, LeaveRequestForm
-from leave.models import LeaveBalance, LeaveRequest, LeaveRequestStatus, LeaveType
+from leave.models import LeaveBalance, LeaveRequest, LeaveRequestStatus
 
 
 class LeaveRequestListView(LoginRequiredMixin, ListView):
@@ -20,9 +17,7 @@ class LeaveRequestListView(LoginRequiredMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        qs = LeaveRequest.objects.select_related(
-            "employee__user", "leave_type", "approver"
-        )
+        qs = LeaveRequest.objects.select_related("employee__user", "leave_type", "approver")
         user = self.request.user
         status = self.request.GET.get("status")
         if status:
@@ -31,8 +26,7 @@ class LeaveRequestListView(LoginRequiredMixin, ListView):
             return qs
         if user.is_manager_or_above and hasattr(user, "employee_profile"):
             return qs.filter(
-                Q(employee__manager=user.employee_profile)
-                | Q(employee=user.employee_profile)
+                Q(employee__manager=user.employee_profile) | Q(employee=user.employee_profile)
             )
         if hasattr(user, "employee_profile"):
             return qs.filter(employee=user.employee_profile)

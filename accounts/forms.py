@@ -1,16 +1,14 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
 
-from .models import User, UserRole
+from .models import User
 
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
         widget=forms.TextInput(attrs={"placeholder": "Username", "autofocus": True})
     )
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={"placeholder": "Password"})
-    )
+    password = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "Password"}))
 
 
 class UserForm(forms.ModelForm):

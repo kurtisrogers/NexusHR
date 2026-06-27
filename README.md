@@ -59,9 +59,21 @@ Visit http://127.0.0.1:8000/ and sign in with a demo account:
 ## Development
 
 ```bash
+pip install -r requirements-dev.txt
+pre-commit install
 python manage.py test
 python manage.py createsuperuser  # optional additional admin
 ```
+
+### Quality checks
+
+Local hooks run linting, formatting, Django checks, and the test suite before each commit:
+
+```bash
+pre-commit run --all-files
+```
+
+CI runs the same checks on every push and pull request to `main` via GitHub Actions (`.github/workflows/ci.yml`). To block merges until CI passes, enable branch protection on `main` and require the **Lint** and **Test** status checks.
 
 ## Project Structure
 

@@ -6,49 +6,95 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('employees', '0001_initial'),
+        ("employees", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ExpenseCategory',
+            name="ExpenseCategory",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('code', models.CharField(max_length=20, unique=True)),
-                ('max_amount', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)),
-                ('requires_receipt', models.BooleanField(default=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("code", models.CharField(max_length=20, unique=True)),
+                (
+                    "max_amount",
+                    models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True),
+                ),
+                ("requires_receipt", models.BooleanField(default=True)),
             ],
             options={
-                'verbose_name_plural': 'expense categories',
-                'ordering': ['name'],
+                "verbose_name_plural": "expense categories",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='ExpenseClaim',
+            name="ExpenseClaim",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200)),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('currency', models.CharField(default='USD', max_length=3)),
-                ('expense_date', models.DateField()),
-                ('description', models.TextField(blank=True)),
-                ('receipt', models.FileField(blank=True, null=True, upload_to='expense_receipts/')),
-                ('status', models.CharField(choices=[('draft', 'Draft'), ('submitted', 'Submitted'), ('approved', 'Approved'), ('rejected', 'Rejected'), ('reimbursed', 'Reimbursed')], default='draft', max_length=20)),
-                ('approver_notes', models.TextField(blank=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('approver', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='approved_expenses', to=settings.AUTH_USER_MODEL)),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='expenses.expensecategory')),
-                ('employee', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='expense_claims', to='employees.employee')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("title", models.CharField(max_length=200)),
+                ("amount", models.DecimalField(decimal_places=2, max_digits=10)),
+                ("currency", models.CharField(default="USD", max_length=3)),
+                ("expense_date", models.DateField()),
+                ("description", models.TextField(blank=True)),
+                ("receipt", models.FileField(blank=True, null=True, upload_to="expense_receipts/")),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("draft", "Draft"),
+                            ("submitted", "Submitted"),
+                            ("approved", "Approved"),
+                            ("rejected", "Rejected"),
+                            ("reimbursed", "Reimbursed"),
+                        ],
+                        default="draft",
+                        max_length=20,
+                    ),
+                ),
+                ("approver_notes", models.TextField(blank=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "approver",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="approved_expenses",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "category",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="expenses.expensecategory"
+                    ),
+                ),
+                (
+                    "employee",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="expense_claims",
+                        to="employees.employee",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-created_at'],
+                "ordering": ["-created_at"],
             },
         ),
     ]

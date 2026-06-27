@@ -6,7 +6,15 @@ from expenses.models import ExpenseClaim
 class ExpenseClaimForm(forms.ModelForm):
     class Meta:
         model = ExpenseClaim
-        fields = ["category", "title", "amount", "currency", "expense_date", "description", "receipt"]
+        fields = [
+            "category",
+            "title",
+            "amount",
+            "currency",
+            "expense_date",
+            "description",
+            "receipt",
+        ]
         widgets = {"expense_date": forms.DateInput(attrs={"type": "date"})}
 
 
