@@ -14,7 +14,14 @@ from expenses.models import ExpenseCategory, ExpenseClaim, ExpenseStatus
 from leave.models import LeaveBalance, LeaveRequest, LeaveRequestStatus, LeaveType
 from organization.models import Company, Department, JobTitle, Location
 from payroll.models import PayFrequency, Payslip, PayslipStatus, SalaryStructure
-from performance.models import Goal, GoalStatus, PerformanceReview, ReviewCycle, ReviewCycleStatus, ReviewStatus
+from performance.models import (
+    Goal,
+    GoalStatus,
+    PerformanceReview,
+    ReviewCycle,
+    ReviewCycleStatus,
+    ReviewStatus,
+)
 from recruitment.models import Applicant, Application, ApplicationStage, JobPosting, JobStatus
 
 
@@ -53,51 +60,86 @@ class Command(BaseCommand):
 
         users = {
             "admin": User.objects.create_superuser(
-                "admin", "admin@nexustech.example", "admin123",
-                first_name="System", last_name="Admin", role=UserRole.SUPER_ADMIN,
+                "admin",
+                "admin@nexustech.example",
+                "admin123",
+                first_name="System",
+                last_name="Admin",
+                role=UserRole.SUPER_ADMIN,
             ),
             "hr.admin": self._user(
-                "hr.admin", "hr@nexustech.example", "hr123",
-                "Helen", "Reyes", UserRole.HR_ADMIN,
+                "hr.admin",
+                "hr@nexustech.example",
+                "hr123",
+                "Helen",
+                "Reyes",
+                UserRole.HR_ADMIN,
             ),
             "manager": self._user(
-                "manager", "manager@nexustech.example", "mgr123",
-                "Marcus", "Chen", UserRole.MANAGER,
+                "manager",
+                "manager@nexustech.example",
+                "mgr123",
+                "Marcus",
+                "Chen",
+                UserRole.MANAGER,
             ),
             "employee": self._user(
-                "employee", "employee@nexustech.example", "emp123",
-                "Emily", "Johnson", UserRole.EMPLOYEE,
+                "employee",
+                "employee@nexustech.example",
+                "emp123",
+                "Emily",
+                "Johnson",
+                UserRole.EMPLOYEE,
             ),
             "recruiter": self._user(
-                "recruiter", "rec@nexustech.example", "rec123",
-                "Rachel", "Kim", UserRole.RECRUITER,
+                "recruiter",
+                "rec@nexustech.example",
+                "rec123",
+                "Rachel",
+                "Kim",
+                UserRole.RECRUITER,
             ),
         }
 
         engineering = Department.objects.create(
-            company=company, name="Engineering", code="ENG",
+            company=company,
+            name="Engineering",
+            code="ENG",
             manager=users["manager"],
         )
         hr_dept = Department.objects.create(
-            company=company, name="Human Resources", code="HR",
+            company=company,
+            name="Human Resources",
+            code="HR",
             manager=users["hr.admin"],
         )
-        sales = Department.objects.create(
-            company=company, name="Sales", code="SLS",
+        Department.objects.create(
+            company=company,
+            name="Sales",
+            code="SLS",
         )
 
         titles = {
             "swe": JobTitle.objects.create(
-                title="Software Engineer", department=engineering, level=3,
-                min_salary=90000, max_salary=140000,
+                title="Software Engineer",
+                department=engineering,
+                level=3,
+                min_salary=90000,
+                max_salary=140000,
             ),
             "mgr": JobTitle.objects.create(
-                title="Engineering Manager", department=engineering, level=5,
-                min_salary=130000, max_salary=180000,
+                title="Engineering Manager",
+                department=engineering,
+                level=5,
+                min_salary=130000,
+                max_salary=180000,
             ),
             "hr": JobTitle.objects.create(
-                title="HR Specialist", department=hr_dept, level=3,
-                min_salary=65000, max_salary=95000,
+                title="HR Specialist",
+                department=hr_dept,
+                level=3,
+                min_salary=65000,
+                max_salary=95000,
             ),
         }
 
@@ -145,15 +187,24 @@ class Command(BaseCommand):
         )
 
         leave_types = [
-            LeaveType.objects.create(name="Annual Leave", code="AL", default_days=20, color="#3b82f6"),
-            LeaveType.objects.create(name="Sick Leave", code="SL", default_days=10, color="#ef4444"),
-            LeaveType.objects.create(name="Personal Leave", code="PL", default_days=5, is_paid=False, color="#8b5cf6"),
+            LeaveType.objects.create(
+                name="Annual Leave", code="AL", default_days=20, color="#3b82f6"
+            ),
+            LeaveType.objects.create(
+                name="Sick Leave", code="SL", default_days=10, color="#ef4444"
+            ),
+            LeaveType.objects.create(
+                name="Personal Leave", code="PL", default_days=5, is_paid=False, color="#8b5cf6"
+            ),
         ]
         year = today.year
         for lt in leave_types:
             LeaveBalance.objects.create(
-                employee=emp, leave_type=lt, year=year,
-                allocated=lt.default_days, used=2 if lt.code == "AL" else 0,
+                employee=emp,
+                leave_type=lt,
+                year=year,
+                allocated=lt.default_days,
+                used=2 if lt.code == "AL" else 0,
             )
 
         LeaveRequest.objects.create(
@@ -192,13 +243,15 @@ class Command(BaseCommand):
             closing_date=today + timedelta(days=60),
         )
         applicant = Applicant.objects.create(
-            first_name="Alex", last_name="Rivera",
+            first_name="Alex",
+            last_name="Rivera",
             email="alex.rivera@example.com",
             phone="+1-555-0100",
             source="LinkedIn",
         )
         Application.objects.create(
-            job=job, applicant=applicant,
+            job=job,
+            applicant=applicant,
             stage=ApplicationStage.INTERVIEW,
             rating=4,
         )
@@ -210,18 +263,23 @@ class Command(BaseCommand):
             status=ReviewCycleStatus.ACTIVE,
         )
         Goal.objects.create(
-            employee=emp, cycle=cycle,
+            employee=emp,
+            cycle=cycle,
             title="Ship leave management module",
-            progress=75, status=GoalStatus.IN_PROGRESS,
+            progress=75,
+            status=GoalStatus.IN_PROGRESS,
             target_date=today + timedelta(days=45),
         )
         PerformanceReview.objects.create(
-            employee=emp, cycle=cycle, reviewer=users["manager"],
+            employee=emp,
+            cycle=cycle,
+            reviewer=users["manager"],
             status=ReviewStatus.MANAGER_REVIEW,
-            self_rating=4, self_comments="Strong quarter with major feature deliveries.",
+            self_rating=4,
+            self_comments="Strong quarter with major feature deliveries.",
         )
 
-        for u, emp_obj, base in [
+        for _u, emp_obj, base in [
             (users["manager"], mgr_emp, 150000),
             (users["employee"], emp, 115000),
         ]:
@@ -250,14 +308,16 @@ class Command(BaseCommand):
         travel = ExpenseCategory.objects.create(name="Travel", code="TRV", max_amount=5000)
         meals = ExpenseCategory.objects.create(name="Meals", code="MLS", max_amount=200)
         ExpenseClaim.objects.create(
-            employee=emp, category=travel,
+            employee=emp,
+            category=travel,
             title="Client site visit — Austin",
             amount=Decimal("342.50"),
             expense_date=today - timedelta(days=5),
             status=ExpenseStatus.SUBMITTED,
         )
         ExpenseClaim.objects.create(
-            employee=emp, category=meals,
+            employee=emp,
+            category=meals,
             title="Team lunch",
             amount=Decimal("86.00"),
             expense_date=today - timedelta(days=2),
@@ -299,6 +359,10 @@ class Command(BaseCommand):
 
     def _user(self, username, email, password, first, last, role):
         return User.objects.create_user(
-            username=username, email=email, password=password,
-            first_name=first, last_name=last, role=role,
+            username=username,
+            email=email,
+            password=password,
+            first_name=first,
+            last_name=last,
+            role=role,
         )

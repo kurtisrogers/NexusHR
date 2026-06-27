@@ -1,15 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count, Q
+from django.db.models import Count
 from django.utils import timezone
 from django.views.generic import TemplateView
 
-from accounts.models import User
 from announcements.models import Announcement
 from attendance.models import AttendanceRecord
 from employees.models import Employee, EmploymentStatus
 from expenses.models import ExpenseClaim, ExpenseStatus
 from leave.models import LeaveRequest, LeaveRequestStatus
-from recruitment.models import Application, JobPosting
+from recruitment.models import JobPosting
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):
@@ -20,9 +19,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         user = self.request.user
         today = timezone.localdate()
 
-        ctx["total_employees"] = Employee.objects.filter(
-            status=EmploymentStatus.ACTIVE
-        ).count()
+        ctx["total_employees"] = Employee.objects.filter(status=EmploymentStatus.ACTIVE).count()
         ctx["pending_leaves"] = LeaveRequest.objects.filter(
             status=LeaveRequestStatus.PENDING
         ).count()
@@ -38,9 +35,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             ctx["my_leaves"] = LeaveRequest.objects.filter(employee=emp)[:5]
             ctx["my_attendance"] = AttendanceRecord.objects.filter(employee=emp)[:7]
             try:
-                ctx["today_record"] = AttendanceRecord.objects.get(
-                    employee=emp, date=today
-                )
+                ctx["today_record"] = AttendanceRecord.objects.get(employee=emp, date=today)
             except AttendanceRecord.DoesNotExist:
                 ctx["today_record"] = None
 

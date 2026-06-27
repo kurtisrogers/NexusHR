@@ -5,7 +5,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import CreateView, ListView
 
-from accounts.mixins import ManagerRequiredMixin
 from expenses.forms import ExpenseApprovalForm, ExpenseClaimForm
 from expenses.models import ExpenseClaim, ExpenseStatus
 
@@ -26,8 +25,7 @@ class ExpenseListView(LoginRequiredMixin, ListView):
             return qs
         if user.is_manager_or_above and hasattr(user, "employee_profile"):
             return qs.filter(
-                Q(employee__manager=user.employee_profile)
-                | Q(employee=user.employee_profile)
+                Q(employee__manager=user.employee_profile) | Q(employee=user.employee_profile)
             )
         if hasattr(user, "employee_profile"):
             return qs.filter(employee=user.employee_profile)

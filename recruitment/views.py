@@ -2,11 +2,11 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.views.generic import CreateView, DetailView, ListView, UpdateView
+from django.views.generic import CreateView, DetailView, ListView
 
 from accounts.mixins import RecruiterRequiredMixin
-from recruitment.forms import ApplicantForm, ApplicationForm, InterviewForm, JobPostingForm
-from recruitment.models import Applicant, Application, ApplicationStage, Interview, JobPosting
+from recruitment.forms import JobPostingForm
+from recruitment.models import Applicant, Application, ApplicationStage, JobPosting
 
 
 class JobListView(LoginRequiredMixin, ListView):

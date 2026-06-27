@@ -1,8 +1,7 @@
 from django import forms
 
-from accounts.models import User, UserRole
-from employees.models import Employee, EmployeeDocument, EmploymentStatus, EmploymentType
-from organization.models import Department, JobTitle, Location
+from accounts.models import UserRole
+from employees.models import Employee, EmployeeDocument
 
 
 class EmployeeForm(forms.ModelForm):
