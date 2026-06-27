@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Salaries{% endblock %}
+{% block page_title %}Salary Structures{% endblock %}
+
+{% block content %}
+<table>
+  <thead><tr><th>Employee</th><th>Base</th><th>Allowances</th><th>Gross</th><th>Frequency</th><th>Effective</th></tr></thead>
+  <tbody>
+    {% for sal in salaries %}
+    <tr>
+      <td>{{ sal.employee.user.display_name }}</td>
+      <td>${{ sal.base_salary }}</td>
+      <td>${{ sal.housing_allowance }} + ${{ sal.transport_allowance }} + ${{ sal.other_allowances }}</td>
+      <td>${{ sal.gross_salary }}</td>
+      <td>{{ sal.get_pay_frequency_display }}</td>
+      <td>{{ sal.effective_date }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6"><em>No salary records.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

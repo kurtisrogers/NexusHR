@@ -1,0 +1,13 @@
+<tr id="leave-{{ req.pk }}">
+  <td>{{ req.employee.user.display_name }}</td>
+  <td>{{ req.leave_type.name }}</td>
+  <td>{{ req.start_date }}</td>
+  <td>{{ req.end_date }}</td>
+  <td>{{ req.days }}</td>
+  <td><span class="badge badge-{{ req.status }}">{{ req.get_status_display }}</span></td>
+  <td>
+    {% if req.status == 'pending' and is_manager_or_above %}
+    <button class="outline" hx-get="{% url 'leave:approve' req.pk %}" hx-target="#leave-{{ req.pk }}" hx-swap="outerHTML">Review</button>
+    {% else %}—{% endif %}
+  </td>
+</tr>

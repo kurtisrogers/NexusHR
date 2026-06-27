@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}{{ job.title }}{% endblock %}
+{% block page_title %}{{ job.title }}{% endblock %}
+
+{% block content %}
+<div class="grid-2">
+  <div class="card-panel">
+    <p><span class="badge badge-{{ job.status }}">{{ job.get_status_display }}</span> · {{ job.department|default:"General" }} · {{ job.openings }} opening(s)</p>
+    <h3>Description</h3>
+    <p>{{ job.description|linebreaks }}</p>
+    {% if job.requirements %}
+    <h3>Requirements</h3>
+    <p>{{ job.requirements|linebreaks }}</p>
+    {% endif %}
+  </div>
+  <div class="card-panel">
+    <dl>
+      <dt>Location</dt><dd>{{ job.location|default:"Remote" }}</dd>
+      <dt>Employment Type</dt><dd>{{ job.employment_type }}</dd>
+      <dt>Salary Range</dt><dd>{% if job.salary_min %}${{ job.salary_min }} – ${{ job.salary_max }}{% else %}Not disclosed{% endif %}</dd>
+      <dt>Closing Date</dt><dd>{{ job.closing_date|default:"Open until filled" }}</dd>
+      <dt>Posted By</dt><dd>{{ job.posted_by.display_name|default:"—" }}</dd>
+    </dl>
+    <h3>Applications ({{ job.applications.count }})</h3>
+    <ul>
+      {% for app in job.applications.all|slice:":5" %}
+      <li>{{ app.applicant.full_name }} — {{ app.get_stage_display }}</li>
+      {% empty %}
+      <li><em>No applications yet</em></li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

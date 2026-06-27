@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Add Employee{% endblock %}
+{% block page_title %}Add Employee{% endblock %}
+
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+  <fieldset>
+    <legend>Account</legend>
+    <label>Username {{ form.username }}</label>
+    <label>Email {{ form.email }}</label>
+    <label>First name {{ form.first_name }}</label>
+    <label>Last name {{ form.last_name }}</label>
+    <label>Role {{ form.role }}</label>
+  </fieldset>
+  <fieldset>
+    <legend>Employment</legend>
+    <label>Employee ID {{ form.employee_id }}</label>
+    <label>Department {{ form.department }}</label>
+    <label>Job title {{ form.job_title }}</label>
+    <label>Location {{ form.location }}</label>
+    <label>Manager {{ form.manager }}</label>
+    <label>Employment type {{ form.employment_type }}</label>
+    <label>Status {{ form.status }}</label>
+    <label>Hire date {{ form.hire_date }}</label>
+    <label>Date of birth {{ form.date_of_birth }}</label>
+    <label>Address {{ form.address }}</label>
+    <label>Emergency contact {{ form.emergency_contact_name }}</label>
+    <label>Emergency phone {{ form.emergency_contact_phone }}</label>
+    <label>Bio {{ form.bio }}</label>
+  </fieldset>
+  <button type="submit">Create Employee</button>
+  <a href="{% url 'employees:list' %}" role="button" class="outline">Cancel</a>
+</form>
+{% endblock %}

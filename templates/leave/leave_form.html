@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Request Leave{% endblock %}
+{% block page_title %}Request Leave{% endblock %}
+
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Submit Request</button>
+  <a href="{% url 'leave:list' %}" role="button" class="outline">Cancel</a>
+</form>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Payslips{% endblock %}
+{% block page_title %}Payslips{% endblock %}
+
+{% block top_actions %}
+{% if is_hr_staff %}
+<a href="{% url 'payroll:salaries' %}" role="button" class="outline">Salary Structures</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<table>
+  <thead><tr><th>Employee</th><th>Period</th><th>Gross</th><th>Deductions</th><th>Tax</th><th>Net Pay</th><th>Status</th></tr></thead>
+  <tbody>
+    {% for slip in payslips %}
+    <tr>
+      <td>{{ slip.employee.user.display_name }}</td>
+      <td>{{ slip.period_start }} – {{ slip.period_end }}</td>
+      <td>${{ slip.base_salary }} + ${{ slip.allowances }}</td>
+      <td>${{ slip.deductions }}</td>
+      <td>${{ slip.tax }}</td>
+      <td><strong>${{ slip.net_pay }}</strong></td>
+      <td>{{ slip.get_status_display }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="7"><em>No payslips.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

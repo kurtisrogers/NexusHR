@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{{ employee.user.display_name }}{% endblock %}
+{% block page_title %}{{ employee.user.display_name }}{% endblock %}
+
+{% block content %}
+<div class="grid-2">
+  <div class="card-panel">
+    <h3>Profile</h3>
+    <dl>
+      <dt>Employee ID</dt><dd>{{ employee.employee_id }}</dd>
+      <dt>Email</dt><dd>{{ employee.user.email }}</dd>
+      <dt>Department</dt><dd>{{ employee.department|default:"—" }}</dd>
+      <dt>Job Title</dt><dd>{{ employee.job_title|default:"—" }}</dd>
+      <dt>Location</dt><dd>{{ employee.location|default:"—" }}</dd>
+      <dt>Manager</dt><dd>{{ employee.manager.user.display_name|default:"—" }}</dd>
+      <dt>Employment Type</dt><dd>{{ employee.get_employment_type_display }}</dd>
+      <dt>Status</dt><dd>{{ employee.get_status_display }}</dd>
+      <dt>Hire Date</dt><dd>{{ employee.hire_date }}</dd>
+    </dl>
+  </div>
+  <div class="card-panel">
+    <h3>Contact & Emergency</h3>
+    <dl>
+      <dt>Phone</dt><dd>{{ employee.user.phone|default:"—" }}</dd>
+      <dt>Address</dt><dd>{{ employee.address|default:"—" }}</dd>
+      <dt>Emergency Contact</dt><dd>{{ employee.emergency_contact_name|default:"—" }}</dd>
+      <dt>Emergency Phone</dt><dd>{{ employee.emergency_contact_phone|default:"—" }}</dd>
+    </dl>
+    {% if employee.bio %}
+    <h4>Bio</h4>
+    <p>{{ employee.bio }}</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card-panel" style="margin-top: 1.5rem;">
+  <h3>Documents</h3>
+  <div id="document-list">
+    <table>
+      <thead><tr><th>Title</th><th>Type</th><th>Uploaded</th></tr></thead>
+      <tbody>
+        {% for doc in employee.documents.all %}
+        {% include "employees/partials/document_row.html" %}
+        {% empty %}
+        <tr><td colspan="3"><em>No documents</em></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if is_hr_staff %}
+  <div id="document-form" hx-get="{% url 'employees:upload_document' employee.pk %}" hx-trigger="load" hx-swap="innerHTML">
+    Loading…
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

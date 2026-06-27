@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Expenses{% endblock %}
+{% block page_title %}Expense Claims{% endblock %}
+
+{% block top_actions %}
+<a href="{% url 'expenses:create' %}" role="button">+ Submit Claim</a>
+{% endblock %}
+
+{% block content %}
+<div class="filter-bar">
+  <a href="{% url 'expenses:list' %}" role="button" class="outline">All</a>
+  <a href="?status=submitted" role="button" class="outline">Submitted</a>
+  <a href="?status=approved" role="button" class="outline">Approved</a>
+</div>
+
+<table>
+  <thead><tr><th>Employee</th><th>Title</th><th>Category</th><th>Amount</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for claim in claims %}
+    {% include "expenses/partials/claim_row.html" %}
+    {% empty %}
+    <tr><td colspan="7"><em>No expense claims.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

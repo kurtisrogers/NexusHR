@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="value">{{ total_employees }}</div>
+    <div class="label">Active Employees</div>
+  </div>
+  <div class="stat-card">
+    <div class="value">{{ pending_leaves }}</div>
+    <div class="label">Pending Leave Requests</div>
+  </div>
+  <div class="stat-card">
+    <div class="value">{{ open_jobs }}</div>
+    <div class="label">Open Positions</div>
+  </div>
+  <div class="stat-card">
+    <div class="value">{{ pending_expenses }}</div>
+    <div class="label">Pending Expenses</div>
+  </div>
+  <div class="stat-card">
+    <div class="value">{{ today_attendance }}</div>
+    <div class="label">Today's Attendance</div>
+  </div>
+  {% if team_size is not None %}
+  <div class="stat-card">
+    <div class="value">{{ team_size }}</div>
+    <div class="label">Direct Reports</div>
+  </div>
+  {% endif %}
+</div>
+
+<div class="grid-2">
+  <div class="card-panel">
+    <h3>Recent Announcements</h3>
+    {% for ann in recent_announcements %}
+    <article>
+      <header><strong>{{ ann.title }}</strong> <small>{{ ann.published_at|date:"M d" }}</small></header>
+      <p>{{ ann.content|truncatewords:30 }}</p>
+    </article>
+    {% empty %}
+    <p><em>No announcements yet.</em></p>
+    {% endfor %}
+    <a href="{% url 'announcements:list' %}">View all →</a>
+  </div>
+
+  <div class="card-panel">
+    <h3>Headcount by Department</h3>
+    <table>
+      <thead><tr><th>Department</th><th>Count</th></tr></thead>
+      <tbody>
+        {% for dept in department_stats %}
+        <tr>
+          <td>{{ dept.department__name|default:"Unassigned" }}</td>
+          <td>{{ dept.count }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="2"><em>No data</em></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% if today_record is not None %}
+<div class="card-panel" style="margin-top: 1.5rem;" id="clock-widget">
+  {% include "attendance/partials/clock_status.html" with record=today_record %}
+</div>
+{% endif %}
+
+{% if my_leaves %}
+<div class="card-panel" style="margin-top: 1.5rem;">
+  <h3>My Recent Leave Requests</h3>
+  <table>
+    <thead><tr><th>Type</th><th>Dates</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for req in my_leaves %}
+      <tr>
+        <td>{{ req.leave_type.name }}</td>
+        <td>{{ req.start_date }} – {{ req.end_date }}</td>
+        <td><span class="badge badge-{{ req.status }}">{{ req.get_status_display }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}

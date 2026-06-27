@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Attendance{% endblock %}
+{% block page_title %}Attendance{% endblock %}
+
+{% block content %}
+<div class="card-panel" id="clock-widget">
+  {% include "attendance/partials/clock_status.html" with record=records.first %}
+</div>
+
+<table style="margin-top: 1.5rem;">
+  <thead><tr><th>Date</th><th>Clock In</th><th>Clock Out</th><th>Hours</th><th>Status</th></tr></thead>
+  <tbody>
+    {% for rec in records %}
+    <tr>
+      <td>{{ rec.date }}</td>
+      <td>{{ rec.clock_in|default:"—" }}</td>
+      <td>{{ rec.clock_out|default:"—" }}</td>
+      <td>{{ rec.hours_worked }}</td>
+      <td>{{ rec.get_status_display }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5"><em>No attendance records.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Reviews{% endblock %}
+{% block page_title %}Performance Reviews{% endblock %}
+
+{% block content %}
+<table>
+  <thead><tr><th>Employee</th><th>Cycle</th><th>Status</th><th>Self Rating</th><th>Manager Rating</th><th>Overall</th></tr></thead>
+  <tbody>
+    {% for review in reviews %}
+    <tr>
+      <td>{{ review.employee.user.display_name }}</td>
+      <td>{{ review.cycle.name }}</td>
+      <td>{{ review.get_status_display }}</td>
+      <td>{{ review.self_rating|default:"—" }}/5</td>
+      <td>{{ review.manager_rating|default:"—" }}/5</td>
+      <td>{{ review.overall_rating|default:"—" }}/5</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6"><em>No reviews yet.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Organization{% endblock %}
+{% block page_title %}Departments{% endblock %}
+
+{% block top_actions %}
+<a href="{% url 'organization:department_create' %}" role="button">+ Add Department</a>
+<a href="{% url 'organization:locations' %}" role="button" class="outline">Locations</a>
+<a href="{% url 'organization:job_titles' %}" role="button" class="outline">Job Titles</a>
+{% endblock %}
+
+{% block content %}
+<table>
+  <thead><tr><th>Name</th><th>Code</th><th>Manager</th><th>Status</th></tr></thead>
+  <tbody>
+    {% for dept in departments %}
+    <tr>
+      <td>{{ dept.name }}</td>
+      <td>{{ dept.code|default:"—" }}</td>
+      <td>{{ dept.manager.display_name|default:"—" }}</td>
+      <td>{% if dept.is_active %}Active{% else %}Inactive{% endif %}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4"><em>No departments.</em></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

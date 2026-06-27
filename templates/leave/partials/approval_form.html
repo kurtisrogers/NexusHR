@@ -1,0 +1,12 @@
+<tr id="leave-{{ leave.pk }}">
+  <td colspan="7">
+    <form hx-post="{% url 'leave:approve' leave.pk %}" hx-target="#leave-{{ leave.pk }}" hx-swap="outerHTML">
+      {% csrf_token %}
+      <p><strong>{{ leave.employee.user.display_name }}</strong> — {{ leave.leave_type.name }} ({{ leave.start_date }} to {{ leave.end_date }}, {{ leave.days }} days)</p>
+      <p>{{ leave.reason|default:"No reason provided" }}</p>
+      {{ form.as_p }}
+      <button type="submit" name="action" value="approve">Approve</button>
+      <button type="submit" name="action" value="reject" class="outline secondary">Reject</button>
+    </form>
+  </td>
+</tr>
