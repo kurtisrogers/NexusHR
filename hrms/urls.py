@@ -5,8 +5,10 @@ from django.shortcuts import redirect
 from django.urls import include, path
 
 from billing.views import StripeWebhookView
+from hrms.health import healthz
 
 urlpatterns = [
+    path("healthz/", healthz, name="healthz"),
     path("", include("marketing.urls")),
     path("webhooks/stripe/", StripeWebhookView.as_view(), name="stripe_webhook"),
     path("app/", lambda r: redirect("reports:dashboard")),

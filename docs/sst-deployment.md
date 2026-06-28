@@ -204,7 +204,7 @@ npm install sst@latest @pulumi/aws
 
 ## Reference infrastructure (`sst.config.ts`)
 
-The following is a **reference** SST config tailored to NexusHR. Adjust instance sizes, scaling bounds, and domains for your traffic profile.
+The live SST config is in [`infra/sst.config.ts`](../infra/sst.config.ts). The excerpt below shows the core structure; see the file for the full definition including CloudWatch alarms.
 
 ```typescript
 /// <reference path="./.sst/platform/config.d.ts" />
@@ -300,9 +300,11 @@ export default $config({
         },
         rules: [{ listen: "443/https", forward: "8000/http" }],
         health: {
-          path: "/",
-          interval: "30 seconds",
-          timeout: "5 seconds",
+          "8000/http": {
+            path: "/healthz/",
+            interval: "30 seconds",
+            timeout: "5 seconds",
+          },
         },
       },
       scaling: {
@@ -629,14 +631,22 @@ PR → CI (lint + test)
 # 1. Install infra dependencies
 cd infra && npm install
 
-# 2. Set secrets
-sst secret set DjangoSecretKey "$(openssl rand -base64 48)" --stage staging
-# ... other secrets ...
+# 2. Configure GitHub repo secrets (for CI deploys)
+#    AWS_DEPLOY_ROLE_ARN          — OIDC role for staging
+#    AWS_PRODUCTION_DEPLOY_ROLE_ARN — OIDC role for production
+# Optional repo variable: AWS_REGION (default us-east-1)
 
-# 3. Deploy staging
+# 3. Set secrets
+sst secret set DjangoSecretKey "$(openssl rand -base64 48)" --stage staging
+sst secret set StripeSecretKey "sk_test_..." --stage staging
+sst secret set StripePublishableKey "pk_test_..." --stage staging
+sst secret set StripeWebhookSecret "whsec_..." --stage staging
+# ... repeat for production with live keys
+
+# 4. Deploy staging
 sst deploy --stage staging
 
-# 4. Verify
+# 5. Verify
 curl -I https://staging.nexushr.com/
 curl -I https://demo.staging.nexushr.com/   # after seeding a demo tenant
 ```
@@ -726,19 +736,19 @@ Costs scale with task count, ACU, and egress. Fargate Spot in staging saves ~50%
 
 ### Phase 1 — Staging MVP
 
-- [ ] Add `infra/` with `sst.config.ts`
+- [x] Add `infra/` with `sst.config.ts`
 - [ ] Deploy staging with Postgres + ECS + ALB
 - [ ] Configure `staging.nexushr.com` DNS and TLS
-- [ ] Add `/healthz/` endpoint for ALB checks
+- [x] Add `/healthz/` endpoint for ALB checks
 - [ ] Verify signup, login, tenant subdomain routing
 
 ### Phase 2 — Production readiness
 
-- [ ] S3 media storage (`django-storages`)
-- [ ] SES for transactional email
-- [ ] Production secrets and Stripe live mode
-- [ ] GitHub Actions deploy workflow with approval gate
-- [ ] CloudWatch alarms
+- [x] S3 media storage (`django-storages`)
+- [x] SES SMTP configuration (env vars in SST; verify domain in SES)
+- [ ] Production secrets and Stripe live mode (`sst secret set` per stage)
+- [x] GitHub Actions deploy workflow with approval gate
+- [x] CloudWatch ALB 5xx alarm (extend with SNS → Slack/PagerDuty)
 
 ### Phase 3 — Scale
 
@@ -754,6 +764,10 @@ Costs scale with task count, ACU, and egress. Fargate Spot in staging saves ~50%
 
 | File | Role |
 |------|------|
+| [`infra/sst.config.ts`](../infra/sst.config.ts) | SST v3 infrastructure (VPC, RDS, ECS, ALB, S3) |
+| [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml) | CI deploy to staging / production |
+| [`scripts/docker-entrypoint.sh`](../scripts/docker-entrypoint.sh) | Migrate + seed + Gunicorn on container start |
+| [`hrms/health.py`](../hrms/health.py) | ALB health check endpoint |
 | [`Dockerfile`](../Dockerfile) | Container image (Python 3.12, Gunicorn, collectstatic) |
 | [`docker-compose.yml`](../docker-compose.yml) | Local production-like stack |
 | [`hrms/settings/production.py`](../hrms/settings/production.py) | Production Django settings |
