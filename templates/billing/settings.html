@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load billing_tags %}
+{% block title %}Billing{% endblock %}
+{% block page_title %}Billing & Plan{% endblock %}
+{% block content %}
+<section class="billing-overview">
+  <article>
+    <h3>Current plan</h3>
+    {% if plan %}
+    <p><strong>{{ plan.name }}</strong> — {{ plan.price_display }}/month</p>
+    <p>Status: {{ subscription.get_status_display|default:"Active" }}</p>
+    <p>Active employees: {{ active_employees }}{% if employee_limit %} / {{ employee_limit }}{% else %} (unlimited){% endif %}</p>
+    {% else %}
+    <p>No active subscription.</p>
+    {% endif %}
+  </article>
+  <article>
+    <h3>Included features</h3>
+    <ul>
+      {% for feature, enabled in feature_access.items %}
+      <li>{% if enabled %}✓{% else %}✗{% endif %} {{ feature_labels|feature_label:feature }}</li>
+      {% endfor %}
+    </ul>
+  </article>
+</section>
+
+{% if user.role == 'super_admin' %}
+<section>
+  <h3>Upgrade plan</h3>
+  <div class="plan-actions">
+    {% for p in plans %}
+    {% if not plan or p.slug != plan.slug %}
+    <form method="post" action="{% url 'billing:upgrade' p.slug %}">
+      {% csrf_token %}
+      <button type="submit" class="outline">{{ p.name }} — {{ p.price_display }}/mo</button>
+    </form>
+    {% endif %}
+    {% endfor %}
+  </div>
+  <form method="post" action="{% url 'billing:portal' %}">
+    {% csrf_token %}
+    <button type="submit" class="secondary">Manage billing in Stripe</button>
+  </form>
+</section>
+{% endif %}
+{% endblock %}

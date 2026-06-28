@@ -3,15 +3,16 @@
 {% block auth_content %}
 <div class="login-page">
   <div class="login-card">
-    <h1>NexusHR</h1>
-    <p class="subtitle">Human Resource Management System</p>
+    <h1>{% if tenant %}{{ tenant.name }}{% else %}NexusHR{% endif %}</h1>
+    <p class="subtitle">Sign in to your HR workspace{% if tenant %} at <code>{{ tenant.subdomain }}</code>{% endif %}</p>
     <form method="post">
       {% csrf_token %}
       {{ form.as_p }}
       <button type="submit">Sign In</button>
     </form>
+    <p><small><a href="{% url 'accounts:password_reset' %}">Forgot password?</a></small></p>
     <details style="margin-top: 1.5rem;">
-      <summary>Demo accounts</summary>
+      <summary>Demo accounts (demo workspace)</summary>
       <small>
         <strong>admin</strong> / admin123 (Super Admin)<br>
         <strong>hr.admin</strong> / hr123 (HR Admin)<br>

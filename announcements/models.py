@@ -45,6 +45,11 @@ class Announcement(models.Model):
 
 
 class PolicyDocument(models.Model):
+    company = models.ForeignKey(
+        "organization.Company",
+        on_delete=models.CASCADE,
+        related_name="policy_documents",
+    )
     title = models.CharField(max_length=200)
     category = models.CharField(max_length=50, default="General")
     content = models.TextField()

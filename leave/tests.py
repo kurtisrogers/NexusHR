@@ -17,11 +17,11 @@ from leave.models import LeaveRequest, LeaveRequestStatus
 
 class LeaveBalanceTests(TestCase):
     def setUp(self):
-        company = create_company()
-        department = create_department(company)
-        user = create_user("leave-user")
+        self.company = create_company()
+        department = create_department(self.company)
+        user = create_user("leave-user", company=self.company)
         self.employee = create_employee(user, employee_id="EMP-001", department=department)
-        self.leave_type = create_leave_type()
+        self.leave_type = create_leave_type(company=self.company)
 
     def test_remaining_balance(self):
         balance = create_leave_balance(
@@ -36,16 +36,16 @@ class LeaveBalanceTests(TestCase):
 
 class LeaveRequestWorkflowTests(TestCase):
     def setUp(self):
-        company = create_company()
-        department = create_department(company)
-        self.employee_user = create_user("employee")
-        self.manager_user = create_user("manager", role=UserRole.MANAGER)
+        self.company = create_company()
+        department = create_department(self.company)
+        self.employee_user = create_user("employee", company=self.company)
+        self.manager_user = create_user("manager", role=UserRole.MANAGER, company=self.company)
         self.employee = create_employee(
             self.employee_user,
             employee_id="EMP-002",
             department=department,
         )
-        self.leave_type = create_leave_type(default_days=10)
+        self.leave_type = create_leave_type(company=self.company, default_days=10)
 
     def test_approve_updates_balance(self):
         request = LeaveRequest.objects.create(

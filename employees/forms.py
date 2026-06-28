@@ -2,6 +2,7 @@ from django import forms
 
 from accounts.models import UserRole
 from employees.models import Employee, EmployeeDocument
+from tenancy.scoping import TenantScope
 
 
 class EmployeeForm(forms.ModelForm):
@@ -29,8 +30,14 @@ class EmployeeForm(forms.ModelForm):
             "bio",
         ]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, tenant=None, **kwargs):
         super().__init__(*args, **kwargs)
+        if tenant:
+            scope = TenantScope(tenant)
+            self.fields["department"].queryset = scope.departments()
+            self.fields["job_title"].queryset = scope.job_titles()
+            self.fields["location"].queryset = scope.locations()
+            self.fields["manager"].queryset = scope.employees()
         if self.instance and self.instance.pk:
             user = self.instance.user
             self.fields["username"].initial = user.username

@@ -2,6 +2,11 @@ from django.db import models
 
 
 class WorkSchedule(models.Model):
+    company = models.ForeignKey(
+        "organization.Company",
+        on_delete=models.CASCADE,
+        related_name="work_schedules",
+    )
     name = models.CharField(max_length=50)
     start_time = models.TimeField()
     end_time = models.TimeField()

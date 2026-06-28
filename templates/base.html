@@ -15,8 +15,8 @@
   <div class="app-layout">
     <aside class="sidebar" :class="{ 'open': sidebarOpen }">
       <div class="sidebar-brand">
-        <strong>NexusHR</strong>
-        <small>Human Resources</small>
+        <strong>{% if tenant %}{{ tenant.name }}{% else %}NexusHR{% endif %}</strong>
+        <small>{% if tenant_plan %}{{ tenant_plan.name }} plan{% else %}Human Resources{% endif %}</small>
       </div>
       <nav>
         <ul>
@@ -25,14 +25,17 @@
           {% if is_hr_staff %}
           <li><a href="{% url 'organization:departments' %}">Organization</a></li>
           {% endif %}
-          <li><a href="{% url 'leave:list' %}">Leave</a></li>
-          <li><a href="{% url 'attendance:list' %}">Attendance</a></li>
-          <li><a href="{% url 'recruitment:jobs' %}">Recruitment</a></li>
-          <li><a href="{% url 'performance:goals' %}">Performance</a></li>
-          <li><a href="{% url 'payroll:payslips' %}">Payroll</a></li>
-          <li><a href="{% url 'expenses:list' %}">Expenses</a></li>
+          {% if feature_access.leave %}<li><a href="{% url 'leave:list' %}">Leave</a></li>{% endif %}
+          {% if feature_access.attendance %}<li><a href="{% url 'attendance:list' %}">Attendance</a></li>{% endif %}
+          {% if feature_access.recruitment %}<li><a href="{% url 'recruitment:jobs' %}">Recruitment</a></li>{% endif %}
+          {% if feature_access.performance %}<li><a href="{% url 'performance:goals' %}">Performance</a></li>{% endif %}
+          {% if feature_access.payroll %}<li><a href="{% url 'payroll:payslips' %}">Payroll</a></li>{% endif %}
+          {% if feature_access.expenses %}<li><a href="{% url 'expenses:list' %}">Expenses</a></li>{% endif %}
           <li><a href="{% url 'announcements:list' %}">Announcements</a></li>
           <li><a href="{% url 'announcements:policies' %}">Policies</a></li>
+          {% if user.role == 'super_admin' %}
+          <li><a href="{% url 'billing:settings' %}">Billing</a></li>
+          {% endif %}
         </ul>
       </nav>
       <div class="sidebar-footer">

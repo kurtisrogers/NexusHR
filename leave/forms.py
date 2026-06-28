@@ -1,6 +1,7 @@
 from django import forms
 
 from leave.models import LeaveRequest
+from tenancy.scoping import TenantScope
 
 
 class LeaveRequestForm(forms.ModelForm):
@@ -11,6 +12,12 @@ class LeaveRequestForm(forms.ModelForm):
             "start_date": forms.DateInput(attrs={"type": "date"}),
             "end_date": forms.DateInput(attrs={"type": "date"}),
         }
+
+    def __init__(self, *args, tenant=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if tenant:
+            scope = TenantScope(tenant)
+            self.fields["leave_type"].queryset = scope.leave_types()
 
 
 class LeaveApprovalForm(forms.Form):

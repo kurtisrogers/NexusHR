@@ -4,8 +4,12 @@ from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import include, path
 
+from billing.views import StripeWebhookView
+
 urlpatterns = [
-    path("", lambda r: redirect("reports:dashboard")),
+    path("", include("marketing.urls")),
+    path("webhooks/stripe/", StripeWebhookView.as_view(), name="stripe_webhook"),
+    path("app/", lambda r: redirect("reports:dashboard")),
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
     path("organization/", include("organization.urls")),
@@ -18,6 +22,7 @@ urlpatterns = [
     path("expenses/", include("expenses.urls")),
     path("announcements/", include("announcements.urls")),
     path("reports/", include("reports.urls")),
+    path("billing/", include("billing.urls")),
 ]
 
 if settings.DEBUG:

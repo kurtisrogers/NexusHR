@@ -1,6 +1,7 @@
 from django import forms
 
 from performance.models import Goal, PerformanceReview, ReviewCycle
+from tenancy.scoping import TenantScope
 
 
 class ReviewCycleForm(forms.ModelForm):
@@ -18,6 +19,12 @@ class GoalForm(forms.ModelForm):
         model = Goal
         fields = ["title", "description", "target_date", "progress", "status", "weight", "cycle"]
         widgets = {"target_date": forms.DateInput(attrs={"type": "date"})}
+
+    def __init__(self, *args, tenant=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if tenant:
+            scope = TenantScope(tenant)
+            self.fields["cycle"].queryset = scope.review_cycles()
 
 
 class PerformanceReviewForm(forms.ModelForm):

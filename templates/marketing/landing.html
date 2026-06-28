@@ -1,0 +1,26 @@
+{% extends "marketing/base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>HR management built for modern teams</h1>
+  <p>NexusHR brings leave, attendance, recruitment, performance, payroll, and more into one platform — with secure subdomain workspaces for every company.</p>
+  <p>
+    <a href="{% url 'marketing:signup' %}" role="button">Start 14-day free trial</a>
+    <a href="{% url 'marketing:pricing' %}" role="button" class="outline">View pricing</a>
+  </p>
+</section>
+<section class="feature-grid">
+  <article>
+    <h3>Multi-tenant by design</h3>
+    <p>Each customer gets an isolated workspace at <code>yourcompany.localhost</code> with role-based access controls.</p>
+  </article>
+  <article>
+    <h3>Full HR suite</h3>
+    <p>Employees, org structure, leave, attendance, ATS, performance reviews, expenses, and payroll.</p>
+  </article>
+  <article>
+    <h3>Flexible plans</h3>
+    <p>Starter, Pro, and Enterprise tiers with module entitlements and employee seat limits.</p>
+  </article>
+</section>
+{% endblock %}

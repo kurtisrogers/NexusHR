@@ -1,6 +1,7 @@
 from django import forms
 
 from recruitment.models import Applicant, Application, Interview, JobPosting
+from tenancy.scoping import TenantScope
 
 
 class JobPostingForm(forms.ModelForm):
@@ -22,6 +23,13 @@ class JobPostingForm(forms.ModelForm):
         ]
         widgets = {"closing_date": forms.DateInput(attrs={"type": "date"})}
 
+    def __init__(self, *args, tenant=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if tenant:
+            scope = TenantScope(tenant)
+            self.fields["department"].queryset = scope.departments()
+            self.fields["job_title"].queryset = scope.job_titles()
+
 
 class ApplicantForm(forms.ModelForm):
     class Meta:
@@ -33,6 +41,13 @@ class ApplicationForm(forms.ModelForm):
     class Meta:
         model = Application
         fields = ["job", "applicant", "stage", "cover_letter", "rating", "notes"]
+
+    def __init__(self, *args, tenant=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if tenant:
+            scope = TenantScope(tenant)
+            self.fields["job"].queryset = scope.job_postings()
+            self.fields["applicant"].queryset = scope.applicants()
 
 
 class InterviewForm(forms.ModelForm):

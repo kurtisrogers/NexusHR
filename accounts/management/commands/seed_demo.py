@@ -9,6 +9,7 @@ from django.utils import timezone
 from accounts.models import User, UserRole
 from announcements.models import Announcement, PolicyDocument
 from attendance.models import AttendanceRecord, AttendanceStatus
+from billing.models import Plan, Subscription, SubscriptionStatus
 from employees.models import Employee, EmploymentStatus, EmploymentType
 from expenses.models import ExpenseCategory, ExpenseClaim, ExpenseStatus
 from leave.models import LeaveBalance, LeaveRequest, LeaveRequestStatus, LeaveType
@@ -37,11 +38,21 @@ class Command(BaseCommand):
 
         company = Company.objects.create(
             name="Nexus Technologies",
+            subdomain="demo",
             legal_name="Nexus Technologies Inc.",
             email="hr@nexustech.example",
             website="https://nexustech.example",
             founded_year=2015,
+            is_active=True,
         )
+
+        plan = Plan.objects.filter(slug="pro").first()
+        if plan:
+            Subscription.objects.create(
+                company=company,
+                plan=plan,
+                status=SubscriptionStatus.ACTIVE,
+            )
 
         hq = Location.objects.create(
             company=company,
@@ -66,6 +77,7 @@ class Command(BaseCommand):
                 first_name="System",
                 last_name="Admin",
                 role=UserRole.SUPER_ADMIN,
+                company=company,
             ),
             "hr.admin": self._user(
                 "hr.admin",
@@ -74,6 +86,7 @@ class Command(BaseCommand):
                 "Helen",
                 "Reyes",
                 UserRole.HR_ADMIN,
+                company,
             ),
             "manager": self._user(
                 "manager",
@@ -82,6 +95,7 @@ class Command(BaseCommand):
                 "Marcus",
                 "Chen",
                 UserRole.MANAGER,
+                company,
             ),
             "employee": self._user(
                 "employee",
@@ -90,6 +104,7 @@ class Command(BaseCommand):
                 "Emily",
                 "Johnson",
                 UserRole.EMPLOYEE,
+                company,
             ),
             "recruiter": self._user(
                 "recruiter",
@@ -98,6 +113,7 @@ class Command(BaseCommand):
                 "Rachel",
                 "Kim",
                 UserRole.RECRUITER,
+                company,
             ),
         }
 
@@ -145,6 +161,7 @@ class Command(BaseCommand):
 
         today = date.today()
         mgr_emp = Employee.objects.create(
+            company=company,
             user=users["manager"],
             employee_id="EMP-001",
             department=engineering,
@@ -155,6 +172,7 @@ class Command(BaseCommand):
             hire_date=today - timedelta(days=1200),
         )
         Employee.objects.create(
+            company=company,
             user=users["hr.admin"],
             employee_id="EMP-002",
             department=hr_dept,
@@ -165,6 +183,7 @@ class Command(BaseCommand):
             hire_date=today - timedelta(days=800),
         )
         emp = Employee.objects.create(
+            company=company,
             user=users["employee"],
             employee_id="EMP-003",
             department=engineering,
@@ -176,6 +195,7 @@ class Command(BaseCommand):
             hire_date=today - timedelta(days=400),
         )
         Employee.objects.create(
+            company=company,
             user=users["recruiter"],
             employee_id="EMP-004",
             department=hr_dept,
@@ -188,13 +208,26 @@ class Command(BaseCommand):
 
         leave_types = [
             LeaveType.objects.create(
-                name="Annual Leave", code="AL", default_days=20, color="#3b82f6"
+                company=company,
+                name="Annual Leave",
+                code="AL",
+                default_days=20,
+                color="#3b82f6",
             ),
             LeaveType.objects.create(
-                name="Sick Leave", code="SL", default_days=10, color="#ef4444"
+                company=company,
+                name="Sick Leave",
+                code="SL",
+                default_days=10,
+                color="#ef4444",
             ),
             LeaveType.objects.create(
-                name="Personal Leave", code="PL", default_days=5, is_paid=False, color="#8b5cf6"
+                company=company,
+                name="Personal Leave",
+                code="PL",
+                default_days=5,
+                is_paid=False,
+                color="#8b5cf6",
             ),
         ]
         year = today.year
@@ -243,6 +276,7 @@ class Command(BaseCommand):
             closing_date=today + timedelta(days=60),
         )
         applicant = Applicant.objects.create(
+            company=company,
             first_name="Alex",
             last_name="Rivera",
             email="alex.rivera@example.com",
@@ -257,6 +291,7 @@ class Command(BaseCommand):
         )
 
         cycle = ReviewCycle.objects.create(
+            company=company,
             name=f"Q2 {year} Performance Review",
             start_date=today - timedelta(days=30),
             end_date=today + timedelta(days=30),
@@ -305,8 +340,12 @@ class Command(BaseCommand):
                 status=PayslipStatus.PAID,
             )
 
-        travel = ExpenseCategory.objects.create(name="Travel", code="TRV", max_amount=5000)
-        meals = ExpenseCategory.objects.create(name="Meals", code="MLS", max_amount=200)
+        travel = ExpenseCategory.objects.create(
+            company=company, name="Travel", code="TRV", max_amount=5000
+        )
+        meals = ExpenseCategory.objects.create(
+            company=company, name="Meals", code="MLS", max_amount=200
+        )
         ExpenseClaim.objects.create(
             employee=emp,
             category=travel,
@@ -340,6 +379,7 @@ class Command(BaseCommand):
         )
 
         PolicyDocument.objects.create(
+            company=company,
             title="Remote Work Policy",
             category="Workplace",
             content="Employees may work remotely up to 3 days per week with manager approval.",
@@ -347,6 +387,7 @@ class Command(BaseCommand):
             effective_date=today - timedelta(days=90),
         )
         PolicyDocument.objects.create(
+            company=company,
             title="Code of Conduct",
             category="Compliance",
             content="All employees must adhere to our professional standards and anti-harassment policies.",
@@ -355,9 +396,9 @@ class Command(BaseCommand):
         )
 
         self.stdout.write(self.style.SUCCESS("Demo data seeded successfully."))
-        self.stdout.write("Login: admin / admin123 (or see login page for all demo accounts)")
+        self.stdout.write("Visit http://demo.localhost:8000/ and sign in with admin / admin123")
 
-    def _user(self, username, email, password, first, last, role):
+    def _user(self, username, email, password, first, last, role, company):
         return User.objects.create_user(
             username=username,
             email=email,
@@ -365,4 +406,5 @@ class Command(BaseCommand):
             first_name=first,
             last_name=last,
             role=role,
+            company=company,
         )

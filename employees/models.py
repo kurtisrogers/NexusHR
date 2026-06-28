@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 
-from organization.models import Department, JobTitle, Location
+from organization.models import Company, Department, JobTitle, Location
 
 
 class EmploymentStatus(models.TextChoices):
@@ -20,12 +20,13 @@ class EmploymentType(models.TextChoices):
 
 
 class Employee(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="employees")
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="employee_profile",
     )
-    employee_id = models.CharField(max_length=20, unique=True)
+    employee_id = models.CharField(max_length=20)
     department = models.ForeignKey(
         Department,
         on_delete=models.SET_NULL,
@@ -76,6 +77,12 @@ class Employee(models.Model):
 
     class Meta:
         ordering = ["employee_id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["company", "employee_id"],
+                name="unique_employee_id_per_company",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.employee_id} — {self.user.display_name}"
