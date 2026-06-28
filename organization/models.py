@@ -4,16 +4,19 @@ from django.db import models
 
 class Company(models.Model):
     name = models.CharField(max_length=200)
+    subdomain = models.SlugField(max_length=63, unique=True)
     legal_name = models.CharField(max_length=200, blank=True)
     tax_id = models.CharField(max_length=50, blank=True)
     website = models.URLField(blank=True)
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=20, blank=True)
     founded_year = models.PositiveIntegerField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name_plural = "companies"
+        ordering = ["name"]
 
     def __str__(self):
         return self.name

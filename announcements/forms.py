@@ -1,6 +1,7 @@
 from django import forms
 
 from announcements.models import Announcement, PolicyDocument
+from tenancy.scoping import TenantScope
 
 
 class AnnouncementForm(forms.ModelForm):
@@ -16,6 +17,12 @@ class AnnouncementForm(forms.ModelForm):
             "is_active",
         ]
         widgets = {"expires_at": forms.DateTimeInput(attrs={"type": "datetime-local"})}
+
+    def __init__(self, *args, tenant=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if tenant:
+            scope = TenantScope(tenant)
+            self.fields["department"].queryset = scope.departments()
 
 
 class PolicyDocumentForm(forms.ModelForm):

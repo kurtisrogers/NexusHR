@@ -1,4 +1,4 @@
-"""NexusHR — Human Resource Management System
+"""NexusHR — Multi-tenant HR SaaS
 
 Inspired by industry-leading platforms:
 - **BambooHR**: Core HR, onboarding, time-off, ATS, performance reviews
@@ -12,41 +12,52 @@ Inspired by industry-leading platforms:
 - **HTMX** — dynamic partial updates (leave approvals, clock in/out, recruitment pipeline)
 - **Alpine.js** — responsive sidebar, lightweight interactivity
 - **Pico CSS** — clean, semantic, classless styling
+- **Stripe** — subscriptions, checkout, customer portal, webhooks
+- **PostgreSQL + Gunicorn + Docker** — production deployment
+
+## SaaS Features
+
+- **Subdomain multi-tenancy** — each customer gets `yourcompany.localhost` (or `yourcompany.nexushr.com` in production)
+- **Self-serve signup** — create workspace, admin account, and trial subscription
+- **Subscription plans** — Starter, Pro, Enterprise with module entitlements and employee seat limits
+- **Stripe billing** — checkout, customer portal, webhook lifecycle (dev mode works without Stripe keys)
+- **Marketing site** — landing page, pricing, terms, privacy policy
+- **Tenant isolation** — all HR data scoped by company
+
+## Subscription Plans
+
+| Plan | Employees | Modules |
+|------|-----------|---------|
+| Starter | 25 | Leave, attendance, employees, org, announcements |
+| Pro | 100 | Starter + recruitment, performance, expenses |
+| Enterprise | Unlimited | Full suite including payroll |
 
 ## User Roles
 
 | Role | Access |
 |------|--------|
-| Super Admin | Full system access, Django admin |
+| Super Admin | Full system access, billing, Django admin |
 | HR Admin | All HR modules, employee management, announcements |
 | HR Manager | HR operations + approvals |
 | Department Manager | Team leave/expense approvals, direct reports |
 | Recruiter | Job postings, applicants, recruitment pipeline |
 | Employee | Self-service: profile, leave, attendance, payslips, expenses |
 
-## Modules
-
-1. **Dashboard** — KPIs, announcements, headcount analytics
-2. **Employees** — profiles, org structure, documents
-3. **Organization** — departments, locations, job titles
-4. **Leave** — types, balances, requests, approval workflow
-5. **Attendance** — clock in/out, timesheets
-6. **Recruitment** — job postings, ATS pipeline, stage management
-7. **Performance** — goals, review cycles, performance reviews
-8. **Payroll** — salary structures, payslips
-9. **Expenses** — claims, categories, approval workflow
-10. **Announcements & Policies** — company communications
-
-## Quick Start
+## Quick Start (Development)
 
 ```bash
 pip install -r requirements.txt
 python manage.py migrate
+python manage.py seed_plans
 python manage.py seed_demo
 python manage.py runserver
 ```
 
-Visit http://127.0.0.1:8000/ and sign in with a demo account:
+- **Marketing site:** http://localhost:8000/
+- **Demo tenant app:** http://demo.localhost:8000/
+- **Sign up new tenant:** http://localhost:8000/signup/
+
+Demo accounts (at `demo.localhost:8000`):
 
 | Username | Password | Role |
 |----------|----------|------|
@@ -56,30 +67,50 @@ Visit http://127.0.0.1:8000/ and sign in with a demo account:
 | employee | emp123 | Employee |
 | recruiter | rec123 | Recruiter |
 
+## Stripe Configuration (Optional)
+
+Copy `.env.example` to `.env` and set:
+
+```bash
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+```
+
+Without Stripe keys, signups activate subscriptions in dev mode automatically.
+
+## Production (Docker)
+
+```bash
+docker compose up --build
+```
+
+Uses PostgreSQL, Gunicorn, and production Django settings. Set `DJANGO_SECRET_KEY` and Stripe env vars in `docker-compose.yml` or your deployment platform.
+
 ## Development
 
 ```bash
 pip install -r requirements-dev.txt
 pre-commit install
 python manage.py test
-python manage.py createsuperuser  # optional additional admin
 ```
 
 ### Quality checks
-
-Local hooks run linting, formatting, Django checks, and the test suite before each commit:
 
 ```bash
 pre-commit run --all-files
 ```
 
-CI runs the same checks on every push and pull request to `main` via GitHub Actions (`.github/workflows/ci.yml`). To block merges until CI passes, enable branch protection on `main` and require the **Lint** and **Test** status checks.
+CI runs lint and tests on every push/PR to `main` via GitHub Actions.
 
 ## Project Structure
 
 ```
+tenancy/        — Subdomain middleware, tenant scoping, mixins
+billing/        — Plans, subscriptions, Stripe, entitlements
+marketing/      — Landing, pricing, signup, legal pages
 accounts/       — Custom User model, roles, auth
-organization/   — Company, departments, locations, job titles
+organization/   — Company (tenant), departments, locations, job titles
 employees/      — Employee profiles, documents
 leave/          — Leave management
 attendance/     — Time tracking

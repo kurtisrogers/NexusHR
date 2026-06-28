@@ -7,7 +7,7 @@ class EmployeeModelTests(TestCase):
     def test_str_representation(self):
         company = create_company()
         department = create_department(company, name="People Ops")
-        user = create_user("employee", first_name="Alex", last_name="Rivera")
+        user = create_user("employee", first_name="Alex", last_name="Rivera", company=company)
         employee = create_employee(user, employee_id="EMP-100", department=department)
 
         self.assertEqual(str(employee), "EMP-100 — Alex Rivera")

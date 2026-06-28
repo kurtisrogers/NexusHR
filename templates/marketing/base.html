@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}NexusHR{% endblock %} | Modern HR SaaS</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <header class="marketing-header container">
+    <nav>
+      <ul>
+        <li><strong><a href="{% url 'marketing:landing' %}">NexusHR</a></strong></li>
+      </ul>
+      <ul>
+        <li><a href="{% url 'marketing:pricing' %}">Pricing</a></li>
+        <li><a href="{% url 'marketing:signup' %}" role="button">Start free trial</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main class="container marketing-main">
+    {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+      <article class="message-{{ message.tags }}">{{ message }}</article>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="container marketing-footer">
+    <small>
+      &copy; NexusHR —
+      <a href="{% url 'marketing:terms' %}">Terms</a> ·
+      <a href="{% url 'marketing:privacy' %}">Privacy</a>
+    </small>
+  </footer>
+</body>
+</html>

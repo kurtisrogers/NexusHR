@@ -3,14 +3,25 @@ from django.db import models
 
 
 class ExpenseCategory(models.Model):
+    company = models.ForeignKey(
+        "organization.Company",
+        on_delete=models.CASCADE,
+        related_name="expense_categories",
+    )
     name = models.CharField(max_length=100)
-    code = models.CharField(max_length=20, unique=True)
+    code = models.CharField(max_length=20)
     max_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     requires_receipt = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = "expense categories"
         ordering = ["name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["company", "code"],
+                name="unique_expense_category_code_per_company",
+            ),
+        ]
 
     def __str__(self):
         return self.name

@@ -12,6 +12,13 @@ class UserRole(models.TextChoices):
 
 
 class User(AbstractUser):
+    company = models.ForeignKey(
+        "organization.Company",
+        on_delete=models.CASCADE,
+        related_name="users",
+        null=True,
+        blank=True,
+    )
     role = models.CharField(
         max_length=20,
         choices=UserRole.choices,

@@ -1,0 +1,24 @@
+{% extends "marketing/base.html" %}
+{% load billing_tags %}
+{% block title %}Pricing{% endblock %}
+{% block content %}
+<h1>Pricing</h1>
+<p>All plans include a 14-day free trial. Choose the tier that fits your team.</p>
+<div class="pricing-grid">
+  {% for plan in plans %}
+  <article class="pricing-card{% if plan.is_popular %} popular{% endif %}">
+    {% if plan.is_popular %}<span class="badge">Most popular</span>{% endif %}
+    <h2>{{ plan.name }}</h2>
+    <p class="price">{{ plan.price_display }}<small>/mo</small></p>
+    <p>{{ plan.description }}</p>
+    <ul>
+      <li>Up to {{ plan.employee_limit_display }} employees</li>
+      {% for feature in plan.features %}
+      <li>{{ feature_labels|feature_label:feature }}</li>
+      {% endfor %}
+    </ul>
+    <a href="{% url 'marketing:signup' %}?plan={{ plan.slug }}" role="button"{% if not plan.is_popular %} class="outline"{% endif %}>Get started</a>
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}

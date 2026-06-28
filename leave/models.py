@@ -5,8 +5,13 @@ from django.db import models
 
 
 class LeaveType(models.Model):
+    company = models.ForeignKey(
+        "organization.Company",
+        on_delete=models.CASCADE,
+        related_name="leave_types",
+    )
     name = models.CharField(max_length=50)
-    code = models.CharField(max_length=10, unique=True)
+    code = models.CharField(max_length=10)
     description = models.TextField(blank=True)
     default_days = models.PositiveSmallIntegerField(default=0)
     is_paid = models.BooleanField(default=True)
@@ -15,6 +20,12 @@ class LeaveType(models.Model):
 
     class Meta:
         ordering = ["name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["company", "code"],
+                name="unique_leave_type_code_per_company",
+            ),
+        ]
 
     def __str__(self):
         return self.name

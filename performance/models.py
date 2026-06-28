@@ -9,6 +9,11 @@ class ReviewCycleStatus(models.TextChoices):
 
 
 class ReviewCycle(models.Model):
+    company = models.ForeignKey(
+        "organization.Company",
+        on_delete=models.CASCADE,
+        related_name="review_cycles",
+    )
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     start_date = models.DateField()

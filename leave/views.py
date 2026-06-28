@@ -1,50 +1,50 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import CreateView, ListView
 
+from billing.entitlements import Feature
 from leave.forms import LeaveApprovalForm, LeaveRequestForm
 from leave.models import LeaveBalance, LeaveRequest, LeaveRequestStatus
+from tenancy.mixins import FeatureRequiredMixin, TenantUserRequiredMixin
+from tenancy.scoping import get_scope
 
 
-class LeaveRequestListView(LoginRequiredMixin, ListView):
+class LeaveRequestListView(TenantUserRequiredMixin, ListView):
     model = LeaveRequest
     template_name = "leave/leave_list.html"
     context_object_name = "requests"
     paginate_by = 20
 
     def get_queryset(self):
-        qs = LeaveRequest.objects.select_related("employee__user", "leave_type", "approver")
-        user = self.request.user
+        scope = get_scope(self.request)
+        qs = scope.leave_requests().select_related("employee__user", "leave_type", "approver")
         status = self.request.GET.get("status")
         if status:
             qs = qs.filter(status=status)
-        if user.is_hr_staff:
-            return qs
-        if user.is_manager_or_above and hasattr(user, "employee_profile"):
-            return qs.filter(
-                Q(employee__manager=user.employee_profile) | Q(employee=user.employee_profile)
-            )
-        if hasattr(user, "employee_profile"):
-            return qs.filter(employee=user.employee_profile)
-        return qs.none()
+        return scope.filter_leave_requests(qs, self.request.user)
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
+        scope = get_scope(self.request)
         ctx["status_filter"] = self.request.GET.get("status", "")
-        ctx["pending_count"] = LeaveRequest.objects.filter(
-            status=LeaveRequestStatus.PENDING
-        ).count()
+        ctx["pending_count"] = (
+            scope.leave_requests().filter(status=LeaveRequestStatus.PENDING).count()
+        )
         return ctx
 
 
-class LeaveRequestCreateView(LoginRequiredMixin, CreateView):
+class LeaveRequestCreateView(FeatureRequiredMixin, TenantUserRequiredMixin, CreateView):
+    required_feature = Feature.LEAVE
     model = LeaveRequest
     form_class = LeaveRequestForm
     template_name = "leave/leave_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["tenant"] = self.request.tenant
+        return kwargs
 
     def form_valid(self, form):
         employee = self.request.user.employee_profile
@@ -62,6 +62,8 @@ class LeaveRequestCreateView(LoginRequiredMixin, CreateView):
 
 
 def leave_balances(request):
+    if not request.user.is_authenticated or not request.tenant:
+        return redirect("accounts:login")
     if not hasattr(request.user, "employee_profile"):
         return redirect("reports:dashboard")
     employee = request.user.employee_profile
@@ -77,7 +79,10 @@ def leave_balances(request):
 
 
 def approve_leave(request, pk):
-    leave = get_object_or_404(LeaveRequest, pk=pk)
+    if not request.user.is_authenticated:
+        return redirect("accounts:login")
+    scope = get_scope(request)
+    leave = get_object_or_404(scope.leave_requests(), pk=pk)
     if request.method == "POST":
         action = request.POST.get("action")
         form = LeaveApprovalForm(request.POST)

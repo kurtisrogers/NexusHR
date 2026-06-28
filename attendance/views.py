@@ -1,22 +1,26 @@
 from datetime import datetime
 
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.generic import ListView
 
 from attendance.models import AttendanceRecord, AttendanceStatus
+from billing.entitlements import Feature
+from tenancy.mixins import FeatureRequiredMixin, TenantUserRequiredMixin
+from tenancy.scoping import get_scope
 
 
-class AttendanceListView(LoginRequiredMixin, ListView):
+class AttendanceListView(FeatureRequiredMixin, TenantUserRequiredMixin, ListView):
+    required_feature = Feature.ATTENDANCE
     model = AttendanceRecord
     template_name = "attendance/attendance_list.html"
     context_object_name = "records"
     paginate_by = 31
 
     def get_queryset(self):
-        qs = AttendanceRecord.objects.select_related("employee__user")
+        scope = get_scope(self.request)
+        qs = scope.attendance_records().select_related("employee__user")
         user = self.request.user
         if user.is_hr_staff:
             return qs
@@ -26,6 +30,8 @@ class AttendanceListView(LoginRequiredMixin, ListView):
 
 
 def clock_in(request):
+    if not request.user.is_authenticated:
+        return redirect("accounts:login")
     if not hasattr(request.user, "employee_profile"):
         messages.error(request, "No employee profile found.")
         return redirect("reports:dashboard")
@@ -52,6 +58,8 @@ def clock_in(request):
 
 
 def clock_out(request):
+    if not request.user.is_authenticated:
+        return redirect("accounts:login")
     if not hasattr(request.user, "employee_profile"):
         return redirect("reports:dashboard")
     employee = request.user.employee_profile
