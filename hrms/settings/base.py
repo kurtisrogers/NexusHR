@@ -5,7 +5,9 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-nexushr-dev-key-change-in-production")
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY", "django-insecure-nexushr-dev-key-change-in-production"
+)
 
 DEBUG = os.environ.get("DJANGO_DEBUG", "true").lower() in {"1", "true", "yes"}
 

@@ -6,74 +6,143 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('employees', '0001_initial'),
-        ('organization', '0001_initial'),
+        ("employees", "0001_initial"),
+        ("organization", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='LeaveType',
+            name="LeaveType",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50)),
-                ('code', models.CharField(max_length=10)),
-                ('description', models.TextField(blank=True)),
-                ('default_days', models.PositiveSmallIntegerField(default=0)),
-                ('is_paid', models.BooleanField(default=True)),
-                ('requires_approval', models.BooleanField(default=True)),
-                ('color', models.CharField(default='#3b82f6', max_length=7)),
-                ('company', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='leave_types', to='organization.company')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("name", models.CharField(max_length=50)),
+                ("code", models.CharField(max_length=10)),
+                ("description", models.TextField(blank=True)),
+                ("default_days", models.PositiveSmallIntegerField(default=0)),
+                ("is_paid", models.BooleanField(default=True)),
+                ("requires_approval", models.BooleanField(default=True)),
+                ("color", models.CharField(default="#3b82f6", max_length=7)),
+                (
+                    "company",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="leave_types",
+                        to="organization.company",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['name'],
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='LeaveRequest',
+            name="LeaveRequest",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start_date', models.DateField()),
-                ('end_date', models.DateField()),
-                ('days', models.DecimalField(decimal_places=1, max_digits=5)),
-                ('reason', models.TextField(blank=True)),
-                ('status', models.CharField(choices=[('draft', 'Draft'), ('pending', 'Pending Approval'), ('approved', 'Approved'), ('rejected', 'Rejected'), ('cancelled', 'Cancelled')], default='pending', max_length=20)),
-                ('approver_notes', models.TextField(blank=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('approver', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='approved_leaves', to=settings.AUTH_USER_MODEL)),
-                ('employee', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='leave_requests', to='employees.employee')),
-                ('leave_type', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='leave.leavetype')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("start_date", models.DateField()),
+                ("end_date", models.DateField()),
+                ("days", models.DecimalField(decimal_places=1, max_digits=5)),
+                ("reason", models.TextField(blank=True)),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("draft", "Draft"),
+                            ("pending", "Pending Approval"),
+                            ("approved", "Approved"),
+                            ("rejected", "Rejected"),
+                            ("cancelled", "Cancelled"),
+                        ],
+                        default="pending",
+                        max_length=20,
+                    ),
+                ),
+                ("approver_notes", models.TextField(blank=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "approver",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="approved_leaves",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "employee",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="leave_requests",
+                        to="employees.employee",
+                    ),
+                ),
+                (
+                    "leave_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="leave.leavetype"
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-created_at'],
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='LeaveBalance',
+            name="LeaveBalance",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('year', models.PositiveSmallIntegerField()),
-                ('allocated', models.DecimalField(decimal_places=1, default=0, max_digits=5)),
-                ('used', models.DecimalField(decimal_places=1, default=0, max_digits=5)),
-                ('carried_over', models.DecimalField(decimal_places=1, default=0, max_digits=5)),
-                ('employee', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='leave_balances', to='employees.employee')),
-                ('leave_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='leave.leavetype')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("year", models.PositiveSmallIntegerField()),
+                ("allocated", models.DecimalField(decimal_places=1, default=0, max_digits=5)),
+                ("used", models.DecimalField(decimal_places=1, default=0, max_digits=5)),
+                ("carried_over", models.DecimalField(decimal_places=1, default=0, max_digits=5)),
+                (
+                    "employee",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="leave_balances",
+                        to="employees.employee",
+                    ),
+                ),
+                (
+                    "leave_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="leave.leavetype"
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-year', 'leave_type__name'],
+                "ordering": ["-year", "leave_type__name"],
             },
         ),
         migrations.AddConstraint(
-            model_name='leavetype',
-            constraint=models.UniqueConstraint(fields=('company', 'code'), name='unique_leave_type_code_per_company'),
+            model_name="leavetype",
+            constraint=models.UniqueConstraint(
+                fields=("company", "code"), name="unique_leave_type_code_per_company"
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='leavebalance',
-            unique_together={('employee', 'leave_type', 'year')},
+            name="leavebalance",
+            unique_together={("employee", "leave_type", "year")},
         ),
     ]

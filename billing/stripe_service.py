@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import logging
 from datetime import timedelta
 
@@ -154,10 +155,8 @@ def _sync_subscription_from_stripe(stripe_sub: dict) -> None:
 
     plan_slug = stripe_sub.get("metadata", {}).get("plan_slug")
     if plan_slug:
-        try:
+        with contextlib.suppress(Plan.DoesNotExist):
             subscription.plan = Plan.objects.get(slug=plan_slug)
-        except Plan.DoesNotExist:
-            pass
 
     subscription.save()
 

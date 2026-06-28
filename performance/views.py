@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.db.models import Q
 from django.urls import reverse
 from django.views.generic import CreateView, ListView
 
@@ -11,7 +10,9 @@ from tenancy.mixins import FeatureRequiredMixin, TenantUserRequiredMixin
 from tenancy.scoping import get_scope
 
 
-class ReviewCycleListView(FeatureRequiredMixin, HRStaffRequiredMixin, TenantUserRequiredMixin, ListView):
+class ReviewCycleListView(
+    FeatureRequiredMixin, HRStaffRequiredMixin, TenantUserRequiredMixin, ListView
+):
     required_feature = Feature.PERFORMANCE
     model = ReviewCycle
     template_name = "performance/cycle_list.html"

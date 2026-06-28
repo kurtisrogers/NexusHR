@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -30,9 +29,9 @@ class LeaveRequestListView(TenantUserRequiredMixin, ListView):
         ctx = super().get_context_data(**kwargs)
         scope = get_scope(self.request)
         ctx["status_filter"] = self.request.GET.get("status", "")
-        ctx["pending_count"] = scope.leave_requests().filter(
-            status=LeaveRequestStatus.PENDING
-        ).count()
+        ctx["pending_count"] = (
+            scope.leave_requests().filter(status=LeaveRequestStatus.PENDING).count()
+        )
         return ctx
 
 

@@ -5,50 +5,89 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('organization', '0001_initial'),
+        ("organization", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Plan',
+            name="Plan",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('slug', models.SlugField(unique=True)),
-                ('name', models.CharField(max_length=50)),
-                ('description', models.TextField(blank=True)),
-                ('stripe_price_id', models.CharField(blank=True, max_length=100)),
-                ('price_monthly_cents', models.PositiveIntegerField(default=0)),
-                ('max_employees', models.PositiveIntegerField(default=25, help_text='0 = unlimited')),
-                ('features', models.JSONField(default=list)),
-                ('sort_order', models.PositiveSmallIntegerField(default=0)),
-                ('is_active', models.BooleanField(default=True)),
-                ('is_popular', models.BooleanField(default=False)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("slug", models.SlugField(unique=True)),
+                ("name", models.CharField(max_length=50)),
+                ("description", models.TextField(blank=True)),
+                ("stripe_price_id", models.CharField(blank=True, max_length=100)),
+                ("price_monthly_cents", models.PositiveIntegerField(default=0)),
+                (
+                    "max_employees",
+                    models.PositiveIntegerField(default=25, help_text="0 = unlimited"),
+                ),
+                ("features", models.JSONField(default=list)),
+                ("sort_order", models.PositiveSmallIntegerField(default=0)),
+                ("is_active", models.BooleanField(default=True)),
+                ("is_popular", models.BooleanField(default=False)),
             ],
             options={
-                'ordering': ['sort_order', 'price_monthly_cents'],
+                "ordering": ["sort_order", "price_monthly_cents"],
             },
         ),
         migrations.CreateModel(
-            name='Subscription',
+            name="Subscription",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.CharField(choices=[('trialing', 'Trialing'), ('active', 'Active'), ('past_due', 'Past Due'), ('canceled', 'Canceled'), ('incomplete', 'Incomplete')], default='trialing', max_length=20)),
-                ('stripe_customer_id', models.CharField(blank=True, max_length=100)),
-                ('stripe_subscription_id', models.CharField(blank=True, max_length=100)),
-                ('trial_ends_at', models.DateTimeField(blank=True, null=True)),
-                ('current_period_end', models.DateTimeField(blank=True, null=True)),
-                ('cancel_at_period_end', models.BooleanField(default=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('company', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='subscription', to='organization.company')),
-                ('plan', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='subscriptions', to='billing.plan')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("trialing", "Trialing"),
+                            ("active", "Active"),
+                            ("past_due", "Past Due"),
+                            ("canceled", "Canceled"),
+                            ("incomplete", "Incomplete"),
+                        ],
+                        default="trialing",
+                        max_length=20,
+                    ),
+                ),
+                ("stripe_customer_id", models.CharField(blank=True, max_length=100)),
+                ("stripe_subscription_id", models.CharField(blank=True, max_length=100)),
+                ("trial_ends_at", models.DateTimeField(blank=True, null=True)),
+                ("current_period_end", models.DateTimeField(blank=True, null=True)),
+                ("cancel_at_period_end", models.BooleanField(default=False)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "company",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="subscription",
+                        to="organization.company",
+                    ),
+                ),
+                (
+                    "plan",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="subscriptions",
+                        to="billing.plan",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-created_at'],
+                "ordering": ["-created_at"],
             },
         ),
     ]

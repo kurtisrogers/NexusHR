@@ -36,7 +36,9 @@ class JobDetailView(FeatureRequiredMixin, TenantUserRequiredMixin, DetailView):
         return get_scope(self.request).job_postings()
 
 
-class JobCreateView(FeatureRequiredMixin, RecruiterRequiredMixin, TenantUserRequiredMixin, CreateView):
+class JobCreateView(
+    FeatureRequiredMixin, RecruiterRequiredMixin, TenantUserRequiredMixin, CreateView
+):
     required_feature = Feature.RECRUITMENT
     model = JobPosting
     form_class = JobPostingForm
@@ -56,7 +58,9 @@ class JobCreateView(FeatureRequiredMixin, RecruiterRequiredMixin, TenantUserRequ
         return reverse("recruitment:job_detail", kwargs={"pk": self.object.pk})
 
 
-class ApplicantListView(FeatureRequiredMixin, RecruiterRequiredMixin, TenantUserRequiredMixin, ListView):
+class ApplicantListView(
+    FeatureRequiredMixin, RecruiterRequiredMixin, TenantUserRequiredMixin, ListView
+):
     required_feature = Feature.RECRUITMENT
     model = Applicant
     template_name = "recruitment/applicant_list.html"
@@ -67,7 +71,9 @@ class ApplicantListView(FeatureRequiredMixin, RecruiterRequiredMixin, TenantUser
         return get_scope(self.request).applicants()
 
 
-class ApplicationListView(FeatureRequiredMixin, RecruiterRequiredMixin, TenantUserRequiredMixin, ListView):
+class ApplicationListView(
+    FeatureRequiredMixin, RecruiterRequiredMixin, TenantUserRequiredMixin, ListView
+):
     required_feature = Feature.RECRUITMENT
     model = Application
     template_name = "recruitment/application_list.html"

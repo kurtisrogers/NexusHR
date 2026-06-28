@@ -10,7 +10,11 @@ from django.views.generic import TemplateView
 from accounts.mixins import SuperAdminRequiredMixin
 from billing.entitlements import Feature, active_employee_count, employee_limit, get_plan
 from billing.models import Plan
-from billing.stripe_service import create_checkout_session, create_customer_portal_session, handle_webhook
+from billing.stripe_service import (
+    create_checkout_session,
+    create_customer_portal_session,
+    handle_webhook,
+)
 from tenancy.mixins import TenantUserRequiredMixin
 from tenancy.utils import tenant_absolute_url
 

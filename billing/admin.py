@@ -5,7 +5,14 @@ from billing.models import Plan, Subscription
 
 @admin.register(Plan)
 class PlanAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug", "price_monthly_cents", "max_employees", "is_active", "sort_order")
+    list_display = (
+        "name",
+        "slug",
+        "price_monthly_cents",
+        "max_employees",
+        "is_active",
+        "sort_order",
+    )
     prepopulated_fields = {"slug": ("name",)}
 
 

@@ -5,8 +5,12 @@ from django.urls import reverse
 from django.views.generic import FormView, TemplateView
 
 from accounts.models import User, UserRole
-from billing.models import Subscription, SubscriptionStatus
-from billing.stripe_service import create_checkout_session, create_trial_subscription, stripe_enabled
+from billing.models import SubscriptionStatus
+from billing.stripe_service import (
+    create_checkout_session,
+    create_trial_subscription,
+    stripe_enabled,
+)
 from marketing.forms import SignupForm
 from organization.models import Company
 from tenancy.utils import public_absolute_url, tenant_absolute_url
@@ -27,8 +31,8 @@ class PricingView(PublicSiteMixin, TemplateView):
     template_name = "marketing/pricing.html"
 
     def get_context_data(self, **kwargs):
-        from billing.models import Plan
         from billing.entitlements import Feature
+        from billing.models import Plan
 
         ctx = super().get_context_data(**kwargs)
         ctx["plans"] = Plan.objects.filter(is_active=True)
@@ -49,8 +53,8 @@ class SignupView(PublicSiteMixin, FormView):
     form_class = SignupForm
 
     def get_context_data(self, **kwargs):
-        from billing.models import Plan
         from billing.entitlements import Feature
+        from billing.models import Plan
 
         ctx = super().get_context_data(**kwargs)
         ctx["plans"] = Plan.objects.filter(is_active=True)
@@ -77,7 +81,7 @@ class SignupView(PublicSiteMixin, FormView):
             email=data["admin_email"],
             is_active=True,
         )
-        user = User.objects.create_user(
+        User.objects.create_user(
             username=data["admin_username"],
             email=data["admin_email"],
             password=data["admin_password"],

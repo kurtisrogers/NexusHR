@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.db.models import Q
 from django.urls import reverse
 from django.views.generic import CreateView, ListView
 

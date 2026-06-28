@@ -97,7 +97,9 @@ class EmployeeProfileUpdateView(TenantUserRequiredMixin, UpdateView):
         scope = get_scope(self.request)
         if self.kwargs.get("pk"):
             return get_object_or_404(
-                scope.filter_employee_visibility(scope.employee_detail_queryset(), self.request.user),
+                scope.filter_employee_visibility(
+                    scope.employee_detail_queryset(), self.request.user
+                ),
                 pk=self.kwargs["pk"],
             )
         return self.request.user.employee_profile

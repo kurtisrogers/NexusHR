@@ -6,97 +6,206 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('organization', '0001_initial'),
+        ("organization", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Applicant',
+            name="Applicant",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('first_name', models.CharField(max_length=100)),
-                ('last_name', models.CharField(max_length=100)),
-                ('email', models.EmailField(max_length=254)),
-                ('phone', models.CharField(blank=True, max_length=20)),
-                ('resume', models.FileField(blank=True, null=True, upload_to='resumes/')),
-                ('linkedin', models.URLField(blank=True)),
-                ('source', models.CharField(blank=True, max_length=50)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('company', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='applicants', to='organization.company')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("first_name", models.CharField(max_length=100)),
+                ("last_name", models.CharField(max_length=100)),
+                ("email", models.EmailField(max_length=254)),
+                ("phone", models.CharField(blank=True, max_length=20)),
+                ("resume", models.FileField(blank=True, null=True, upload_to="resumes/")),
+                ("linkedin", models.URLField(blank=True)),
+                ("source", models.CharField(blank=True, max_length=50)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "company",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="applicants",
+                        to="organization.company",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-created_at'],
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='Application',
+            name="Application",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('stage', models.CharField(choices=[('applied', 'Applied'), ('screening', 'Screening'), ('interview', 'Interview'), ('offer', 'Offer'), ('hired', 'Hired'), ('rejected', 'Rejected')], default='applied', max_length=20)),
-                ('cover_letter', models.TextField(blank=True)),
-                ('rating', models.PositiveSmallIntegerField(blank=True, null=True)),
-                ('notes', models.TextField(blank=True)),
-                ('applied_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('applicant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='applications', to='recruitment.applicant')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "stage",
+                    models.CharField(
+                        choices=[
+                            ("applied", "Applied"),
+                            ("screening", "Screening"),
+                            ("interview", "Interview"),
+                            ("offer", "Offer"),
+                            ("hired", "Hired"),
+                            ("rejected", "Rejected"),
+                        ],
+                        default="applied",
+                        max_length=20,
+                    ),
+                ),
+                ("cover_letter", models.TextField(blank=True)),
+                ("rating", models.PositiveSmallIntegerField(blank=True, null=True)),
+                ("notes", models.TextField(blank=True)),
+                ("applied_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "applicant",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="applications",
+                        to="recruitment.applicant",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-applied_at'],
+                "ordering": ["-applied_at"],
             },
         ),
         migrations.CreateModel(
-            name='Interview',
+            name="Interview",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('scheduled_at', models.DateTimeField()),
-                ('duration_minutes', models.PositiveSmallIntegerField(default=60)),
-                ('location', models.CharField(blank=True, max_length=200)),
-                ('notes', models.TextField(blank=True)),
-                ('feedback', models.TextField(blank=True)),
-                ('rating', models.PositiveSmallIntegerField(blank=True, null=True)),
-                ('completed', models.BooleanField(default=False)),
-                ('application', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='interviews', to='recruitment.application')),
-                ('interviewer', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("scheduled_at", models.DateTimeField()),
+                ("duration_minutes", models.PositiveSmallIntegerField(default=60)),
+                ("location", models.CharField(blank=True, max_length=200)),
+                ("notes", models.TextField(blank=True)),
+                ("feedback", models.TextField(blank=True)),
+                ("rating", models.PositiveSmallIntegerField(blank=True, null=True)),
+                ("completed", models.BooleanField(default=False)),
+                (
+                    "application",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="interviews",
+                        to="recruitment.application",
+                    ),
+                ),
+                (
+                    "interviewer",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['scheduled_at'],
+                "ordering": ["scheduled_at"],
             },
         ),
         migrations.CreateModel(
-            name='JobPosting',
+            name="JobPosting",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200)),
-                ('description', models.TextField()),
-                ('requirements', models.TextField(blank=True)),
-                ('location', models.CharField(blank=True, max_length=100)),
-                ('employment_type', models.CharField(default='full_time', max_length=20)),
-                ('salary_min', models.DecimalField(blank=True, decimal_places=2, max_digits=12, null=True)),
-                ('salary_max', models.DecimalField(blank=True, decimal_places=2, max_digits=12, null=True)),
-                ('status', models.CharField(choices=[('draft', 'Draft'), ('open', 'Open'), ('on_hold', 'On Hold'), ('closed', 'Closed'), ('filled', 'Filled')], default='draft', max_length=20)),
-                ('openings', models.PositiveSmallIntegerField(default=1)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('closing_date', models.DateField(blank=True, null=True)),
-                ('department', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='job_postings', to='organization.department')),
-                ('job_title', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='organization.jobtitle')),
-                ('posted_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='posted_jobs', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("title", models.CharField(max_length=200)),
+                ("description", models.TextField()),
+                ("requirements", models.TextField(blank=True)),
+                ("location", models.CharField(blank=True, max_length=100)),
+                ("employment_type", models.CharField(default="full_time", max_length=20)),
+                (
+                    "salary_min",
+                    models.DecimalField(blank=True, decimal_places=2, max_digits=12, null=True),
+                ),
+                (
+                    "salary_max",
+                    models.DecimalField(blank=True, decimal_places=2, max_digits=12, null=True),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("draft", "Draft"),
+                            ("open", "Open"),
+                            ("on_hold", "On Hold"),
+                            ("closed", "Closed"),
+                            ("filled", "Filled"),
+                        ],
+                        default="draft",
+                        max_length=20,
+                    ),
+                ),
+                ("openings", models.PositiveSmallIntegerField(default=1)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("closing_date", models.DateField(blank=True, null=True)),
+                (
+                    "department",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="job_postings",
+                        to="organization.department",
+                    ),
+                ),
+                (
+                    "job_title",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="organization.jobtitle",
+                    ),
+                ),
+                (
+                    "posted_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="posted_jobs",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-created_at'],
+                "ordering": ["-created_at"],
             },
         ),
         migrations.AddField(
-            model_name='application',
-            name='job',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='applications', to='recruitment.jobposting'),
+            model_name="application",
+            name="job",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="applications",
+                to="recruitment.jobposting",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='application',
-            unique_together={('job', 'applicant')},
+            name="application",
+            unique_together={("job", "applicant")},
         ),
     ]
