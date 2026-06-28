@@ -87,6 +87,10 @@ docker compose up --build
 
 Uses PostgreSQL, Gunicorn, and production Django settings. Set `DJANGO_SECRET_KEY` and Stripe env vars in `docker-compose.yml` or your deployment platform.
 
+## AWS Deployment (SST)
+
+For staging and production on AWS (ECS Fargate, RDS, ALB, auto-scaling), see [docs/sst-deployment.md](docs/sst-deployment.md).
+
 ## Development
 
 ```bash

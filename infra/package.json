@@ -1,0 +1,13 @@
+{
+  "name": "nexushr-infra",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy:staging": "sst deploy --stage staging",
+    "deploy:production": "sst deploy --stage production"
+  },
+  "devDependencies": {
+    "sst": "^3.9.0",
+    "typescript": "^5.7.0"
+  }
+}

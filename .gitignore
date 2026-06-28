@@ -15,3 +15,5 @@ htmlcov/
 dist/
 build/
 .DS_Store
+infra/node_modules/
+infra/.sst/
